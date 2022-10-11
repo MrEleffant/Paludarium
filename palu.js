@@ -23,22 +23,24 @@ client.on("ready", async () => {
     console.log(`${client.user.tag} is ready!`)
     eteindrePrise()
     // check if we are after 10am and before 10pm
-
-    const now = new Date()
-    if (now.getHours() >= 10 && now.getHours() < 22) {
+    const now = new Date()  
+    console.log(now.getHours())
+    if (now.getHours() >= 10 && now.getHours() < 23) {
         allumerLumiere()
+    } else {
+        eteindreLumiere()
     }
 
 
 
     // cron eveery minute on sunday 
-    let debutJour = new cron.CronJob(`00 ${config.hours.start} * * *`, allumerLumiere);
+    let debutJour = new cron.CronJob(`00 10 * * *`, allumerLumiere);
     debutJour.start();
-    let finJour = new cron.CronJob(`00 ${config.hours.endLight} * * *`, eteindreLumiere);
+    let finJour = new cron.CronJob(`00 23 * * *`, eteindreLumiere);
     finJour.start();
 
-    let vapo = new cron.CronJob(`00  ${config.hours.start}-${config.hours.endVapo} * * *`, vaporisations);
-    vapo.start();
+    // let vapo = new cron.CronJob(`00  10-22 * * *`, vaporisations);
+    // vapo.start();
 
 })
 
