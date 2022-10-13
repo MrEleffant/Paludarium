@@ -39,8 +39,8 @@ client.on("ready", async () => {
     let finJour = new cron.CronJob(`00 23 * * *`, eteindreLumiere);
     finJour.start();
 
-    // let vapo = new cron.CronJob(`00  10-22 * * *`, vaporisations);
-    // vapo.start();
+    let vapo = new cron.CronJob(`00  10-22/2 * * *`, vaporisations);
+    vapo.start();
 
 })
 
