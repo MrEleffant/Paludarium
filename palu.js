@@ -23,7 +23,7 @@ client.on("ready", async () => {
     console.log(`${client.user.tag} is ready!`)
     eteindrePrise()
     // check if we are after 10am and before 10pm
-    const now = new Date()  
+    const now = new Date()
     console.log(now.getHours())
     if (now.getHours() >= 10 && now.getHours() < 23) {
         allumerLumiere()
@@ -44,13 +44,73 @@ client.on("ready", async () => {
 
 })
 
-// client.on("messageCreate", async (message) => {
-//     if (message.author.bot) return;
-//     if (message.channel.type === "dm") return;
-//     const args = message.content.substring(config.prefix.length).trim().split(" ");
-//     const command = args.shift().toLowerCase();
-//     if (!message.content.startsWith(config.prefix)) return;
-//     switch (command) {
+client.on("messageCreate", async (message) => {
+    if (message.author.bot) return;
+    if (message.channel.type === "dm") return;
+    const args = message.content.substring(config.prefix.length).trim().split(" ");
+    const command = args.shift().toLowerCase();
+    if (!message.content.startsWith(config.prefix)) return;
+    switch (command) {
+        case "setup": {
+            if (!message.member.permissions.has("ADMINISTRATOR")) break
+            message.delete();
+            const embed = new EmbedBuilder()
+                .setTitle("Controle du paludarium")
+                .setColor("#a6d132")
+            const buttons = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId("lightOn")
+                        .setLabel("Allumer Lumière")
+                        .setStyle(ButtonStyle.Success)
+                )
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId("lightOff")
+                        .setLabel("Eteindre Lumière")
+                        .setStyle(ButtonStyle.Danger)
+                )
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId("Vapo10s")
+                        .setLabel("Vaporisation 10s")
+                        .setStyle(ButtonStyle.Primary)
+                )
+
+            message.channel.send({ embeds: [embed], components: [buttons] })
+            break
+        }
+    }
+})
+
+client.on("interactionCreate", async (interaction) => {
+    const interactionId = interaction.customId.split("_")[0];
+    const arg = interaction.customId.split("_")[1];
+    if (interaction.isButton()) {
+        switch (interactionId) {
+            case "lightOn": {
+                await interaction.deferUpdate();
+                allumerLumiere()
+                break
+            }
+            case "lightOff": {
+                await interaction.deferUpdate();
+                eteindreLumiere()
+                break
+            }
+            case "Vapo10s": {
+                await interaction.deferUpdate();
+                vaporisations()
+                break
+            }
+
+            default: {
+                break;
+            }
+        }
+
+    }
+})
 
 
 function allumerLumiere() {
@@ -89,7 +149,7 @@ function eteindreLumiere() {
 // eteindre toute la prise
 function eteindrePrise() {
     for (let i = 0; i < 5; i++) {
-        var command = 'cm?cmnd=Power'+i+'%20Off';
+        var command = 'cm?cmnd=Power' + i + '%20Off';
         var options = {
             url: `http://${config.ip}/${command}`,
             method: 'GET',
@@ -97,7 +157,7 @@ function eteindrePrise() {
                 'Content-Type': 'application/json'
             }
         };
-    
+
         request(options, function (error, response, body) {
             if (!error && response.statusCode == 200) {
                 console.log(body);
@@ -107,22 +167,22 @@ function eteindrePrise() {
 }
 
 function vaporisations() {
-    var command = 'cm?cmnd=Power'+2+'%20On';
-        var options = {
-            url: `http://${config.ip}/${command}`,
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        };
-    
-        request(options, function (error, response, body) {
-            if (!error && response.statusCode == 200) {
-                console.log(body);
-            }
-        });
+    var command = 'cm?cmnd=Power' + 2 + '%20On';
+    var options = {
+        url: `http://${config.ip}/${command}`,
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    request(options, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            console.log(body);
+        }
+    });
     setTimeout(() => {
-        var command = 'cm?cmnd=Power'+2+'%20Off';
+        var command = 'cm?cmnd=Power' + 2 + '%20Off';
         var options = {
             url: `http://${config.ip}/${command}`,
             method: 'GET',
@@ -130,7 +190,7 @@ function vaporisations() {
                 'Content-Type': 'application/json'
             }
         };
-    
+
         request(options, function (error, response, body) {
             if (!error && response.statusCode == 200) {
                 console.log(body);
