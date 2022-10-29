@@ -25,28 +25,29 @@ client.on("ready", async () => {
     await wait(2000)
     // check if we are after 10am and before 10pm
     const now = new Date()
+
     console.log(now.getHours())
-    if (now.getHours() >= 10 && now.getHours() < 22) {
+    if (now.getHours() >= config.heures.jour.debut && now.getHours() < config.heures.jour.fin) {
         allumerLumiere()
-    } else if (now.getHours() >= 22 && now.getHours() < 23) {
+    } else if (now.getHours() >= config.heures.crepuscule.debut && now.getHours() < config.heures.crepuscule.fin) {
         allumerLumBleue()
     } else {
         eteindreLumieres()
     }
 
-    let debutJour = new cron.CronJob(`00 10 * * *`, allumerLumiere);
+    let debutJour = new cron.CronJob(`00 ${config.heures.jour.debut} * * *`, allumerLumiere);
     debutJour.start();
-    let finJour = new cron.CronJob(`00 22 * * *`, () => {
+    let finJour = new cron.CronJob(`00 ${config.heures.jour.fin} * * *`, () => {
         allumerLumBleue()
         eteindreLumiere()
     });
     finJour.start();
 
 
-    let nuit = new cron.CronJob(`00 23 * * *`, eteindreLumieres);
+    let nuit = new cron.CronJob(`00 ${config.heures.crepuscule.fin} * * *`, eteindreLumieres);
     nuit.start();
 
-    let vapo = new cron.CronJob(`00  10-22/2 * * *`, vaporisations10s);
+    let vapo = new cron.CronJob(`00  ${config.heures.vapo.debut}-${config.heures.vapo.fin}/${config.heures.vapo.ratio} * * *`, vaporisations10s);
     vapo.start();
 
     return
@@ -159,7 +160,7 @@ client.on("interactionCreate", async (interaction) => {
                     await wait(time)
                     await eteindreLumiere()
 
-                    const inter = Math.floor(Math.random() * (5000 - 2000 + 1) + 2000)
+                    const inter = Math.floor(Math.random() * (4000 - 2000 + 1) + 2000)
                     console.log({inter})
                     await wait(inter)
                 }

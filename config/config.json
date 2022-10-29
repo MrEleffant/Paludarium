@@ -1,5 +1,20 @@
 {
     "guild": "997149313299910696",
     "ip": "192.168.1.25",
-    "prefix": "?"
+    "prefix": "?",
+    "heures": {
+        "jour": {
+            "debut": 11,
+            "fin": 22
+        },
+        "crepuscule": {
+            "debut": 22,
+            "fin": 23
+        },
+        "vapo": {
+            "debut": 11,
+            "fin": 21,
+            "ratio": 3 
+        }
+    }
 }
