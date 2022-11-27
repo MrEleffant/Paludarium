@@ -2,7 +2,7 @@ require('dotenv').config()
 var request = require('request');
 const cron = require('cron');
 const fs = require("fs");
-const { Client, GatewayIntentBits, Partials, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
+const { Client, GatewayIntentBits, Partials, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle, AttachmentBuilder } = require('discord.js');
 
 const client = new Client({
     intents: [
@@ -26,7 +26,6 @@ client.on("ready", async () => {
     // check if we are after 10am and before 10pm
     const now = new Date()
 
-    console.log(now.getHours())
     if (now.getHours() >= config.heures.jour.debut && now.getHours() < config.heures.jour.fin) {
         allumerLumiere()
     } else if (now.getHours() >= config.heures.crepuscule.debut && now.getHours() < config.heures.crepuscule.fin) {
@@ -50,6 +49,9 @@ client.on("ready", async () => {
     let vapo = new cron.CronJob(`00  ${config.heures.vapo.debut}-${config.heures.vapo.fin}/${config.heures.vapo.ratio} * * *`, vaporisations10s);
     vapo.start();
 
+    let plot = new cron.CronJob(`2/15 * * * *`, plotingTempHum)
+    plot.start()
+
     return
 })
 
@@ -63,6 +65,18 @@ client.on("messageCreate", async (message) => {
         case "setup": {
             if (!message.member.permissions.has("ADMINISTRATOR")) break
             message.delete();
+            const humEmbed = new EmbedBuilder()
+                .setTitle("Humidité")
+                .setColor("#3C63AD")
+                .setTimestamp()
+            const tempEmbed = new EmbedBuilder()
+                .setTitle("Température")
+                .setColor("#A23923")
+                .setTimestamp()
+            await message.channel.send({ embeds: [humEmbed] })
+            await message.channel.send({ embeds: [tempEmbed] })
+
+
             const embed = new EmbedBuilder()
                 .setTitle("Controle du paludarium")
                 .setColor("#a6d132")
@@ -154,14 +168,14 @@ client.on("interactionCreate", async (interaction) => {
                 while (orage) {
                     //gen num between 300 and 700
                     const time = Math.floor(Math.random() * (600 - 200 + 1) + 200)
-                    console.log({time})
+                    console.log({ time })
                     await allumerLumiere()
 
                     await wait(time)
                     await eteindreLumiere()
 
                     const inter = Math.floor(Math.random() * (4000 - 2000 + 1) + 2000)
-                    console.log({inter})
+                    console.log({ inter })
                     await wait(inter)
                 }
 
@@ -355,4 +369,181 @@ async function wait(ms) {
 
 function genNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+async function plotingTempHum() {
+    console.log("plotingTempHum")
+    async function plot(data, color) {
+        const { ChartJSNodeCanvas } = require("chartjs-node-canvas");
+
+        const width = 1000;
+        const height = 500;
+        const chartCallback = (ChartJS) => { };
+        const canvas = new ChartJSNodeCanvas({ width, height }, chartCallback);
+        const configuration = {
+            legend: { display: false },
+            type: "line",
+            data: {
+                labels: data.date,
+                datasets: [{
+                    data: data.data,
+                    backgroundColor: color,
+                    borderColor: color,
+                    cubicInterpolationMode: "monotone",
+                    borderWidth: 10
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        ticks: {
+                            color: "white",
+                            font: {
+                                size: 20
+                            }
+                        },
+                        grid: {
+                            borderColor: "rgba(0, 0, 0, 0)",
+                            display: false,
+                            drawborder: false
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: "white",
+                            font: {
+                                size: 10
+                            }
+                        },
+                        grid: {
+                            borderColor: "rgba(0, 0, 0, 0)",
+                            display: false
+                        }
+                    }
+                },
+                elements: {
+                    point: {
+                        radius: 0
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        text: "Chart.js Line Chart - Cubic interpolation mode"
+                    }
+                }
+            }
+        };
+
+        const image = await canvas.renderToBuffer(configuration);
+        const attachment = new AttachmentBuilder(image, "ping.png");
+        return attachment;
+    }
+    const today = new Date()
+
+    const files = fs.readdirSync('../zigbee2mqtt/data/log')
+    const todayFiles = files.filter(file => file.includes(today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()))
+
+    todayFiles.forEach(tfile => {
+        fs.readFileSync(`../zigbee2mqtt/data/log/${tfile}/log.txt`, 'utf8').split(/\r?\n/).forEach(line => {
+            if (line.includes('payload')) {
+
+
+                // getting and logging datas
+                try {
+                    let data = line.split('payload')[1]
+                    data = data.substring(1, data.length - 1).substring(1, data.length)
+                    data = JSON.parse(data)
+
+
+                    if (data.humidity) {
+                        const time = line.split(' ')[3]
+                        const hour = time.split(':')[0]
+                        const minute = time.split(':')[1]
+                        const second = time.split(':')[2]
+
+
+                        const fname = `./data/logs/${line.split(' ')[2]}.json`
+                        if (!fs.existsSync(fname)) {
+                            fs.writeFileSync(fname, JSON.stringify({}))
+                        }
+                        // add data to json file
+                        const json = require(fname)
+                        json[hour + ':' + minute + ':' + second] = data
+                        fs.writeFileSync(fname, JSON.stringify(json, null, 1), 'utf8', function (err) {
+                            if (err) throw err;
+                        })
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+        })
+    });
+
+    const storeChannel = await client.channels.fetch(config.plotChannel)
+
+
+    // plot today data and send it in channel
+    const path = `./data/logs/${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}.json`
+    const todayData = require(path)
+
+    const humidityData = {
+        date: [],
+        data: []
+    }
+    const temperatureData = {
+        date: [],
+        data: []
+    }
+    Object.keys(todayData).forEach(key => {
+        if (!key.startsWith("last")) {
+            humidityData.date.push(key)
+            humidityData.data.push(todayData[key].humidity)
+
+            temperatureData.date.push(key)
+            temperatureData.data.push(todayData[key].temperature)
+        }
+    })
+
+
+    const controleChannel = await client.channels.fetch(config.controleChannel)
+
+    await storeChannel.send({ files: [await plot(humidityData, "rgba(60, 99, 173, 1)")] }).then(msg => {
+        msg.attachments.map(att => {
+            todayData.lastHumPLot = att.url;
+        });
+        fs.writeFileSync(path, JSON.stringify(todayData, null, 1), 'utf8', function (err) {
+            if (err) throw err;
+        })
+
+    })
+    await storeChannel.send({ files: [await plot(temperatureData, 'rgba(162, 57, 35, 1)')] }).then(msg => {
+        msg.attachments.map(att => {
+            todayData.lastTempPLot = att.url;
+        });
+        fs.writeFileSync(path, JSON.stringify(todayData, null, 1), 'utf8', function (err) {
+            if (err) throw err;
+        })
+    })
+
+
+    const humMessage = await controleChannel.messages.fetch(config.humControleMessage)
+    const humEmbed = new EmbedBuilder()
+        .setTitle("Humidité")
+        .setColor("#3C63AD")
+        .setImage(todayData.lastHumPLot)
+        .setTimestamp();
+    humMessage.edit({ embeds: [humEmbed] })
+
+
+    const tempMessage = await controleChannel.messages.fetch(config.tempControleMessage)
+    const tempEmbed = new EmbedBuilder()
+        .setTitle("Température")
+        .setColor("#A23923")
+        .setTimestamp()
+        .setImage(todayData.lastTempPLot);
+    tempMessage.edit({ embeds: [tempEmbed] })
 }

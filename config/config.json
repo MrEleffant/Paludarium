@@ -1,5 +1,9 @@
 {
     "guild": "997149313299910696",
+    "plotChannel": "1046446625146540063",
+    "controleChannel": "1030201462195765368",
+    "humControleMessage": "1046451474328203365",
+    "tempControleMessage": "1046451475146084352",
     "ip": "192.168.1.25",
     "prefix": "?",
     "heures": {
