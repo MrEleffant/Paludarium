@@ -14,7 +14,7 @@ const client = new Client({
 });
 
 let guild
-const config = require("./config/config.json")
+const config = require("./config/config.json");
 
 client.login(process.env.TOKEN);
 
@@ -375,33 +375,96 @@ function genNumber(min, max) {
 
 async function plotingTempHum() {
     console.log("plotingTempHum")
-    async function plot(data, color, data2, color2) {
+    async function plot(data, color, data2, color2, labels) {
         const { ChartJSNodeCanvas } = require("chartjs-node-canvas");
 
         const width = 1000;
         const height = 500;
         const chartCallback = (ChartJS) => { };
         const canvas = new ChartJSNodeCanvas({ width, height }, chartCallback);
+        // const configuration = {
+        //     legend: { display: false },
+        //     type: "line",
+        //     data: {
+        //         datasets: [{
+        //             labels: data.date,
+        //             data: data.data,
+        //             backgroundColor: color,
+        //             borderColor: color,
+        //             cubicInterpolationMode: "monotone",
+        //             borderWidth: 10
+        //         },
+        //         {
+        //             labels: data2?.date,
+        //             data: data2?.data,
+        //             backgroundColor: color2,
+        //             borderColor: color2,
+        //             cubicInterpolationMode: "monotone",
+        //             borderWidth: 10
+        //         }
+        //         ]
+        //     },
+        //     options: {
+        //         scales: {
+        //             y: {
+        //                 ticks: {
+        //                     color: "white",
+        //                     font: {
+        //                         size: 20
+        //                     }
+        //                 },
+        //                 grid: {
+        //                     borderColor: "rgba(0, 0, 0, 0)",
+        //                     display: false,
+        //                     drawborder: false
+        //                 }
+        //             },
+        //             x: {
+        //                 ticks: {
+        //                     color: "white",
+        //                     font: {
+        //                         size: 10
+        //                     }
+        //                 },
+        //                 grid: {
+        //                     borderColor: "rgba(0, 0, 0, 0)",
+        //                     display: false
+        //                 }
+        //             }
+        //         },
+        //         elements: {
+        //             point: {
+        //                 radius: 0
+        //             }
+        //         },
+        //         plugins: {
+        //             legend: {
+        //                 display: false
+        //             }
+        //         }
+        //     }
+        // };
+
         const configuration = {
             legend: { display: false },
             type: "line",
             data: {
-                labels: data.date,
+                labels: labels,
                 datasets: [{
-                    data: data.data,
+                    data: data,
+                    spanGaps: true,
                     backgroundColor: color,
                     borderColor: color,
                     cubicInterpolationMode: "monotone",
                     borderWidth: 10
-                },
-                {
-                    data: data2?.data,
+                }, {
+                    data: data2,
+                    spanGaps: true,
                     backgroundColor: color2,
                     borderColor: color2,
                     cubicInterpolationMode: "monotone",
                     borderWidth: 10
-                }
-            ]
+                }]
             },
             options: {
                 scales: {
@@ -439,9 +502,6 @@ async function plotingTempHum() {
                 plugins: {
                     legend: {
                         display: false
-                    },
-                    title: {
-                        text: "Chart.js Line Chart - Cubic interpolation mode"
                     }
                 }
             }
@@ -458,10 +518,8 @@ async function plotingTempHum() {
     // const todayFiles = files.filter(file => file.includes(today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()))
     // get most recent file
     const todayS = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
-    console.log(todayS)
     // get most recent folder
     const todayFiles = files.filter(file => fs.readFileSync(`../zigbee2mqtt/data/log/${file}/log.txt`, 'utf8').includes(todayS))
-    console.log({ todayFiles })
     todayFiles.forEach(tfile => {
         fs.readFileSync(`../zigbee2mqtt/data/log/${tfile}/log.txt`, 'utf8').split(/\r?\n/).forEach(line => {
             if (line.includes('payload') && line.includes(todayS)) {
@@ -488,8 +546,8 @@ async function plotingTempHum() {
                         }
                         // add data to json file
                         const json = require(fname)
-                        if (!json[id]) json[id] = {}
-                        json[id][hour + ':' + minute + ':' + second] = data
+                        data["device"] = id
+                        json[hour + ':' + minute + ':' + second] = data
                         fs.writeFileSync(fname, JSON.stringify(json, null, 1), 'utf8', function (err) {
                             if (err) throw err;
                         })
@@ -508,37 +566,64 @@ async function plotingTempHum() {
     const path = `./data/logs/${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}.json`
     const todayData = require(path)
 
+    const labels = []
     const humidityData = {
-        date: [],
-        data: []
+    }
+    const temperatureData = {
     }
 
     // const humidityData = {
     //     date: [],
     //     data: []
     // }
-    
-    const temperatureData = {
-        date: [],
-        data: []
-    }
-    Object.keys(todayData).forEach(device => {
-        Object.keys(todayData[device]).forEach(key => {
-            if (device.startsWith("0x")) {
-                console.log({ device, key }, device.startsWith("0x"))
-                humidityData.date.push(key)
-                humidityData.data.push(todayData[device][key].humidity)
 
-                temperatureData.date.push(key)
-                temperatureData.data.push(todayData[device][key].temperature)
+    // const temperatureData = {
+    //     date: [],
+    //     data: []
+    // }
+    // get list of devices
+    const devices = []
+    for (const key in todayData) {
+        if (todayData.hasOwnProperty(key)) {
+            const element = todayData[key];
+            if (!devices.includes(element.device)) {
+                if (element?.device) {
+                    devices.push(element.device)
+
+                    humidityData[element.device] = []
+                    temperatureData[element.device] = []
+                }
+            }
+        }
+    }
+    Object.keys(todayData).forEach(time => {
+        if (time.startsWith("last")) return
+        const device = todayData[time].device
+        const humidity = todayData[time].humidity
+        const temperature = todayData[time].temperature
+        humidityData[device].push(humidity)
+        temperatureData[device].push(temperature)
+        devices.forEach(devi => {
+            if (devi != device) {
+                humidityData[devi].push(null)
+                temperatureData[devi].push(null)
             }
         })
+
+        labels.push(time)
     })
+
 
 
     const controleChannel = await client.channels.fetch(config.controleChannel)
 
-    await storeChannel.send({ files: [await plot(humidityData, "rgba(60, 99, 173, 1)")] }).then(msg => {
+    const dataHum1 = humidityData[Object.keys(humidityData)[0]]
+    const colorHum1 = "rgba(60, 99, 173, 1)"
+    const dataHum2 = humidityData[Object.keys(humidityData)[1]]
+    const colorHum2 = "rgba(108, 200, 249, 1)"
+
+
+    await storeChannel.send({ files: [await plot(dataHum1, colorHum1, dataHum2, colorHum2, labels)] }).then(msg => {
         msg.attachments.map(att => {
             todayData.lastHumPLot = att.url;
         });
@@ -547,7 +632,14 @@ async function plotingTempHum() {
         })
 
     })
-    await storeChannel.send({ files: [await plot(temperatureData, 'rgba(162, 57, 35, 1)')] }).then(msg => {
+
+
+    const dataTemp1 = temperatureData[Object.keys(temperatureData)[0]]
+    const colorTemp1 = "rgba(162, 57, 35 ,1)"
+    const dataTemp2 = temperatureData[Object.keys(temperatureData)[1]]
+    const colorTemp2 = "rgba(168, 81, 62, 1)"
+
+    await storeChannel.send({ files: [await plot(dataTemp1, colorTemp1, dataTemp2, colorTemp2, labels)] }).then(msg => {
         msg.attachments.map(att => {
             todayData.lastTempPLot = att.url;
         });
@@ -575,13 +667,40 @@ async function plotingTempHum() {
     tempMessage.edit({ embeds: [tempEmbed] })
 
 
-    // get last humidity and temperature data
+    // get last humidity and temperature data for each device
+    const lastData = {}
+    for (const key in todayData) {
+        if (todayData.hasOwnProperty(key)) {
+            const element = todayData[key];
+            if (element.humidity) {
+                if (!lastData[element.device]) {
+                    lastData[element.device] = {
+                        humidity: element.humidity,
+                        temperature: element.temperature
+                    }
+                } else {
+                    lastData[element.device].humidity = element.humidity
+                    lastData[element.device].temperature = element.temperature
+                }
+            }
+        }
+    }
+
+    // 0x00158d00033f09fa = "Point froid"
+    // 0x00158d0008ce79dd = "Point chaud"
+
+    const hotPoint = lastData["0x00158d0008ce79dd"]
+    const coldPoint = lastData["0x00158d00033f09fa"]
+
+
+
+
     const embed = new EmbedBuilder()
         .setTitle("Controle du paludarium")
         .setColor("#a6d132")
         .addFields(
-            { name: "Humidité", value: todayData["0x00158d0008ce79dd"][Object.keys(todayData["0x00158d0008ce79dd"])[Object.keys(todayData["0x00158d0008ce79dd"]).length - 1]].humidity + " %", inline: true },
-            { name: "Température", value: todayData["0x00158d0008ce79dd"][Object.keys(todayData["0x00158d0008ce79dd"])[Object.keys(todayData["0x00158d0008ce79dd"]).length - 1]].temperature + " °C", inline: true },
+            { name: "Point Chaud", value: `${hotPoint.temperature} °C\n${hotPoint.humidity} %`, inline: true },
+            { name: "Point Froid", value: `${coldPoint.temperature} °C\n${coldPoint.humidity} %`, inline: true },
         )
         .setTimestamp();
     const controlePannel = await controleChannel.messages.fetch(config.controlPannel)
