@@ -21,6 +21,7 @@ client.login(process.env.TOKEN);
 client.on("ready", async () => {
     guild = await client.guilds.fetch(config.guild)
     console.log(`${client.user.tag} is ready!`)
+
     await eteindrePrise()
     await wait(2000)
     // check if we are after 10am and before 10pm
@@ -51,6 +52,7 @@ client.on("ready", async () => {
 
     let plot = new cron.CronJob(`2/15 * * * *`, plotingTempHum)
     plot.start()
+    plotingTempHum()
 
     return
 })
@@ -373,7 +375,7 @@ function genNumber(min, max) {
 
 async function plotingTempHum() {
     console.log("plotingTempHum")
-    async function plot(data, color) {
+    async function plot(data, color, data2, color2) {
         const { ChartJSNodeCanvas } = require("chartjs-node-canvas");
 
         const width = 1000;
@@ -391,7 +393,15 @@ async function plotingTempHum() {
                     borderColor: color,
                     cubicInterpolationMode: "monotone",
                     borderWidth: 10
-                }]
+                },
+                {
+                    data: data2?.data,
+                    backgroundColor: color2,
+                    borderColor: color2,
+                    cubicInterpolationMode: "monotone",
+                    borderWidth: 10
+                }
+            ]
             },
             options: {
                 scales: {
@@ -444,19 +454,23 @@ async function plotingTempHum() {
     const today = new Date()
 
     const files = fs.readdirSync('../zigbee2mqtt/data/log')
-    const todayFiles = files.filter(file => file.includes(today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()))
-
+    // get last file in folder
+    // const todayFiles = files.filter(file => file.includes(today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()))
+    // get most recent file
+    const todayS = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
+    console.log(todayS)
+    // get most recent folder
+    const todayFiles = files.filter(file => fs.readFileSync(`../zigbee2mqtt/data/log/${file}/log.txt`, 'utf8').includes(todayS))
+    console.log({ todayFiles })
     todayFiles.forEach(tfile => {
         fs.readFileSync(`../zigbee2mqtt/data/log/${tfile}/log.txt`, 'utf8').split(/\r?\n/).forEach(line => {
-            if (line.includes('payload')) {
-
-
+            if (line.includes('payload') && line.includes(todayS)) {
                 // getting and logging datas
                 try {
                     let data = line.split('payload')[1]
                     data = data.substring(1, data.length - 1).substring(1, data.length)
                     data = JSON.parse(data)
-
+                    const id = line.split('zigbee2mqtt/')[1].split("',")[0]
 
                     if (data.humidity) {
                         const time = line.split(' ')[3]
@@ -465,13 +479,17 @@ async function plotingTempHum() {
                         const second = time.split(':')[2]
 
 
-                        const fname = `./data/logs/${line.split(' ')[2]}.json`
+                        const fname = `./data/logs/${todayS}.json`
                         if (!fs.existsSync(fname)) {
-                            fs.writeFileSync(fname, JSON.stringify({}))
+                            fs.writeFileSync(fname, JSON.stringify({
+                                "lastHumPLot": client.user.displayAvatarURL(),
+                                "lastTempPLot": client.user.displayAvatarURL()
+                            }))
                         }
                         // add data to json file
                         const json = require(fname)
-                        json[hour + ':' + minute + ':' + second] = data
+                        if (!json[id]) json[id] = {}
+                        json[id][hour + ':' + minute + ':' + second] = data
                         fs.writeFileSync(fname, JSON.stringify(json, null, 1), 'utf8', function (err) {
                             if (err) throw err;
                         })
@@ -494,18 +512,27 @@ async function plotingTempHum() {
         date: [],
         data: []
     }
+
+    // const humidityData = {
+    //     date: [],
+    //     data: []
+    // }
+    
     const temperatureData = {
         date: [],
         data: []
     }
-    Object.keys(todayData).forEach(key => {
-        if (!key.startsWith("last")) {
-            humidityData.date.push(key)
-            humidityData.data.push(todayData[key].humidity)
+    Object.keys(todayData).forEach(device => {
+        Object.keys(todayData[device]).forEach(key => {
+            if (device.startsWith("0x")) {
+                console.log({ device, key }, device.startsWith("0x"))
+                humidityData.date.push(key)
+                humidityData.data.push(todayData[device][key].humidity)
 
-            temperatureData.date.push(key)
-            temperatureData.data.push(todayData[key].temperature)
-        }
+                temperatureData.date.push(key)
+                temperatureData.data.push(todayData[device][key].temperature)
+            }
+        })
     })
 
 
@@ -546,4 +573,17 @@ async function plotingTempHum() {
         .setTimestamp()
         .setImage(todayData.lastTempPLot);
     tempMessage.edit({ embeds: [tempEmbed] })
+
+
+    // get last humidity and temperature data
+    const embed = new EmbedBuilder()
+        .setTitle("Controle du paludarium")
+        .setColor("#a6d132")
+        .addFields(
+            { name: "Humidité", value: todayData["0x00158d0008ce79dd"][Object.keys(todayData["0x00158d0008ce79dd"])[Object.keys(todayData["0x00158d0008ce79dd"]).length - 1]].humidity + " %", inline: true },
+            { name: "Température", value: todayData["0x00158d0008ce79dd"][Object.keys(todayData["0x00158d0008ce79dd"])[Object.keys(todayData["0x00158d0008ce79dd"]).length - 1]].temperature + " °C", inline: true },
+        )
+        .setTimestamp();
+    const controlePannel = await controleChannel.messages.fetch(config.controlPannel)
+    controlePannel.edit({ embeds: [embed] })
 }

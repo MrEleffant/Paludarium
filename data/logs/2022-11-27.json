@@ -1,4 +1,6 @@
 {
+ "lastHumPLot": "https://cdn.discordapp.com/attachments/1046446625146540063/1046543992029978624/file.jpg",
+ "lastTempPLot": "https://cdn.discordapp.com/attachments/1046446625146540063/1046543993611223121/file.jpg",
  "14:02:58": {
   "humidity": 68.74,
   "pressure": 1018.4,
@@ -120,9 +122,7 @@
   "linkquality": 0,
   "power_outage_count": 6,
   "pressure": 1009.9,
-  "temperature": 22.09,
+  "temperature": 200000009,
   "voltage": 3185
- },
- "lastHumPLot": "https://cdn.discordapp.com/attachments/1046446625146540063/1046462120499359885/file.jpg",
- "lastTempPLot": "https://cdn.discordapp.com/attachments/1046446625146540063/1046462122382602341/file.jpg"
+ }
 }
