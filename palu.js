@@ -2,7 +2,7 @@ require('dotenv').config()
 var request = require('request');
 const cron = require('cron');
 const fs = require("fs");
-const { Client, GatewayIntentBits, Partials, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle, AttachmentBuilder } = require('discord.js');
+const { Client, GatewayIntentBits, Partials, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, Events, SelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, AttachmentBuilder } = require('discord.js');
 
 const client = new Client({
     intents: [
@@ -194,6 +194,35 @@ client.on("interactionCreate", async (interaction) => {
             }
         }
 
+    } else if (interaction.isSelectMenu()) {
+        console.log(interactionId)
+        switch (interaction.customId) {
+            case "tempPlot": {
+                const value = interaction.values[0]
+                const oldLog = require(`./data/logs/${value}`)
+                const tempEmbed = new EmbedBuilder()
+                    .setTitle("Température")
+                    .setColor("#A23923")
+                    .setFooter({ text: `Log du ${value.split(".")[0]}` })
+                    .setImage(oldLog.lastTempPLot);
+                interaction.reply({ embeds: [tempEmbed], ephemeral: true })
+                break
+            }
+            case "humPlot": {
+                const value = interaction.values[0]
+                const oldLog = require(`./data/logs/${value}`)
+                const humEmbed = new EmbedBuilder()
+                    .setTitle("Humidité")
+                    .setColor("#3C63AD")
+                    .setFooter({ text: `Log du ${value.split(".")[0]}` })
+                    .setImage(oldLog.lastHumPLot);
+                interaction.reply({ embeds: [humEmbed], ephemeral: true })
+                break
+            }
+            default: {
+                break;
+            }
+        }
     }
 })
 
@@ -517,7 +546,7 @@ async function plotingTempHum() {
     // get last file in folder
     // const todayFiles = files.filter(file => file.includes(today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()))
     // get most recent file
-    const todayS = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
+    const todayS = today.getFullYear() + '-'+('0' + (today.getMonth() + 1)).slice(-2)+'-'+('0' + today.getDate()).slice(-2)
     // get most recent folder
     const todayFiles = files.filter(file => fs.readFileSync(`../zigbee2mqtt/data/log/${file}/log.txt`, 'utf8').includes(todayS))
     todayFiles.forEach(tfile => {
@@ -563,7 +592,9 @@ async function plotingTempHum() {
 
 
     // plot today data and send it in channel
-    const path = `./data/logs/${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}.json`
+
+    const date = today.getFullYear() + '-'+('0' + (today.getMonth() + 1)).slice(-2)+'-'+('0' + today.getDate()).slice(-2)
+    const path = `./data/logs/${date}.json`
     const todayData = require(path)
 
     const labels = []
@@ -615,15 +646,20 @@ async function plotingTempHum() {
 
 
 
+    const hotDevice = "0x00158d0008ce79dd"
+    const coldDevice = "0x00158d00033f09fa"
     const controleChannel = await client.channels.fetch(config.controleChannel)
 
-    const dataHum1 = humidityData[Object.keys(humidityData)[0]]
-    const colorHum1 = "rgba(60, 99, 173, 1)"
-    const dataHum2 = humidityData[Object.keys(humidityData)[1]]
-    const colorHum2 = "rgba(108, 200, 249, 1)"
+
+    const dataHum1 = humidityData[hotDevice]
+    const dataHum2 = humidityData[coldDevice]
+    // const color1 = "rgba(69, 123, 157, 1)"
+    // const color2 = "rgba(241, 250, 238, 1)"
+    const color1 = "rgba(162, 57, 35, 1)"
+    const color2 = "rgba(60, 99, 173, 1)"
 
 
-    await storeChannel.send({ files: [await plot(dataHum1, colorHum1, dataHum2, colorHum2, labels)] }).then(msg => {
+    await storeChannel.send({ files: [await plot(dataHum1, color1, dataHum2, color2, labels)] }).then(msg => {
         msg.attachments.map(att => {
             todayData.lastHumPLot = att.url;
         });
@@ -634,12 +670,10 @@ async function plotingTempHum() {
     })
 
 
-    const dataTemp1 = temperatureData[Object.keys(temperatureData)[0]]
-    const colorTemp1 = "rgba(162, 57, 35 ,1)"
-    const dataTemp2 = temperatureData[Object.keys(temperatureData)[1]]
-    const colorTemp2 = "rgba(168, 81, 62, 1)"
+    const dataTemp1 = temperatureData[hotDevice]
+    const dataTemp2 = temperatureData[coldDevice]
 
-    await storeChannel.send({ files: [await plot(dataTemp1, colorTemp1, dataTemp2, colorTemp2, labels)] }).then(msg => {
+    await storeChannel.send({ files: [await plot(dataTemp1, color1, dataTemp2, color2, labels)] }).then(msg => {
         msg.attachments.map(att => {
             todayData.lastTempPLot = att.url;
         });
@@ -648,6 +682,32 @@ async function plotingTempHum() {
         })
     })
 
+    const f = fs.readdirSync('./data/logs')
+    const recentFiles = f.slice(Math.max(files.length - 25, 0))
+    const logList = []
+    recentFiles.forEach(file => {
+        logList.push({
+            label: file.split(".")[0],
+            value: file
+        })
+    })
+
+    const humPlot = new ActionRowBuilder()
+        .addComponents(
+            new SelectMenuBuilder()
+                .setCustomId("humPlot")
+                .setPlaceholder("Autres logs")
+                .addOptions(logList)
+        );
+    const tempPlot = new ActionRowBuilder()
+        .addComponents(
+            new SelectMenuBuilder()
+                .setCustomId("tempPlot")
+                .setPlaceholder("Autres logs")
+                .addOptions(logList)
+        );
+
+
 
     const humMessage = await controleChannel.messages.fetch(config.humControleMessage)
     const humEmbed = new EmbedBuilder()
@@ -655,7 +715,7 @@ async function plotingTempHum() {
         .setColor("#3C63AD")
         .setImage(todayData.lastHumPLot)
         .setTimestamp();
-    humMessage.edit({ embeds: [humEmbed] })
+    humMessage.edit({ embeds: [humEmbed], components: [humPlot] })
 
 
     const tempMessage = await controleChannel.messages.fetch(config.tempControleMessage)
@@ -664,7 +724,9 @@ async function plotingTempHum() {
         .setColor("#A23923")
         .setTimestamp()
         .setImage(todayData.lastTempPLot);
-    tempMessage.edit({ embeds: [tempEmbed] })
+    tempMessage.edit({ embeds: [tempEmbed], components: [tempPlot] })
+
+
 
 
     // get last humidity and temperature data for each device
@@ -689,8 +751,9 @@ async function plotingTempHum() {
     // 0x00158d00033f09fa = "Point froid"
     // 0x00158d0008ce79dd = "Point chaud"
 
-    const hotPoint = lastData["0x00158d0008ce79dd"]
-    const coldPoint = lastData["0x00158d00033f09fa"]
+
+    const hotPoint = lastData[hotDevice]
+    const coldPoint = lastData[coldDevice]
 
 
 
