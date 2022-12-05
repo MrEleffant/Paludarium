@@ -546,7 +546,7 @@ async function plotingTempHum() {
     // get last file in folder
     // const todayFiles = files.filter(file => file.includes(today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()))
     // get most recent file
-    const todayS = today.getFullYear() + '-'+('0' + (today.getMonth() + 1)).slice(-2)+'-'+('0' + today.getDate()).slice(-2)
+    const todayS = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2)
     // get most recent folder
     const todayFiles = files.filter(file => fs.readFileSync(`../zigbee2mqtt/data/log/${file}/log.txt`, 'utf8').includes(todayS))
     todayFiles.forEach(tfile => {
@@ -593,8 +593,12 @@ async function plotingTempHum() {
 
     // plot today data and send it in channel
 
-    const date = today.getFullYear() + '-'+('0' + (today.getMonth() + 1)).slice(-2)+'-'+('0' + today.getDate()).slice(-2)
+    const date = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2)
     const path = `./data/logs/${date}.json`
+    if (!fs.existsSync(path)) {
+        console.log("no data for today")
+        return
+    }
     const todayData = require(path)
 
     const labels = []
@@ -748,22 +752,15 @@ async function plotingTempHum() {
         }
     }
 
-    // 0x00158d00033f09fa = "Point froid"
-    // 0x00158d0008ce79dd = "Point chaud"
-
-
     const hotPoint = lastData[hotDevice]
     const coldPoint = lastData[coldDevice]
-
-
-
 
     const embed = new EmbedBuilder()
         .setTitle("Controle du paludarium")
         .setColor("#a6d132")
         .addFields(
-            { name: "Point Chaud", value: `${hotPoint.temperature} °C\n${hotPoint.humidity} %`, inline: true },
-            { name: "Point Froid", value: `${coldPoint.temperature} °C\n${coldPoint.humidity} %`, inline: true },
+            { name: "Point Chaud", value: `${hotPoint?.temperature || "-"} °C\n${hotPoint?.humidity || "-"} %`, inline: true },
+            { name: "Point Froid", value: `${coldPoint?.temperature || "-"} °C\n${coldPoint?.humidity || "-"} %`, inline: true },
         )
         .setTimestamp();
     const controlePannel = await controleChannel.messages.fetch(config.controlPannel)
