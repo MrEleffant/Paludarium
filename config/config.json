@@ -1,25 +1,30 @@
 {
     "guild": "997149313299910696",
+    "logChannel": "1065372169137291396",
     "plotChannel": "1046446625146540063",
     "controleChannel": "1030201462195765368",
-    "controlPannel": "1046451475515179168",
-    "humControleMessage": "1046451474328203365",
-    "tempControleMessage": "1046451475146084352",
+    "controlPannel": "1065309221106761748",
+    "humControleMessage": "1065309217348661469",
+    "tempControleMessage": "1065309218841833503",
     "ip": "192.168.1.25",
     "prefix": "?",
     "heures": {
         "jour": {
-            "debut": 11,
+            "debut": 10,
             "fin": 22
         },
         "crepuscule": {
             "debut": 22,
-            "fin": 23
+            "fin": 0
         },
         "vapo": {
             "debut": 11,
-            "fin": 21,
-            "ratio": 4 
+            "fin": 22,
+            "ratio": 4,
+            "duree": 12
+        },
+        "ventil": {
+            "duree": 120
         }
     }
 }

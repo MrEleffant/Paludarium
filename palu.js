@@ -13,16 +13,20 @@ const client = new Client({
     ], partials: [Partials.Channel]
 });
 
-let guild
+let guild, logChannel
 const config = require("./config/config.json");
 
 client.login(process.env.TOKEN);
 
 client.on("ready", async () => {
     guild = await client.guilds.fetch(config.guild)
+    logChannel = await client.channels.fetch(config.logChannel)
+
     console.log(`${client.user.tag} is ready!`)
+    log("Bot démarré")
 
     await eteindrePrise()
+
     await wait(2000)
     // check if we are after 10am and before 10pm
     const now = new Date()
@@ -47,7 +51,7 @@ client.on("ready", async () => {
     let nuit = new cron.CronJob(`00 ${config.heures.crepuscule.fin} * * *`, eteindreLumieres);
     nuit.start();
 
-    let vapo = new cron.CronJob(`00  ${config.heures.vapo.debut}-${config.heures.vapo.fin}/${config.heures.vapo.ratio} * * *`, vaporisations10s);
+    let vapo = new cron.CronJob(`00  ${config.heures.vapo.debut}-${config.heures.vapo.fin}/${config.heures.vapo.ratio} * * *`, vaporisations);
     vapo.start();
 
     let plot = new cron.CronJob(`2/15 * * * *`, plotingTempHum)
@@ -75,8 +79,8 @@ client.on("messageCreate", async (message) => {
                 .setTitle("Température")
                 .setColor("#A23923")
                 .setTimestamp()
-            await message.channel.send({ embeds: [humEmbed] })
-            await message.channel.send({ embeds: [tempEmbed] })
+            const humMessage = await message.channel.send({ embeds: [humEmbed] })
+            const tempMessage = await message.channel.send({ embeds: [tempEmbed] })
 
 
             const embed = new EmbedBuilder()
@@ -114,7 +118,31 @@ client.on("messageCreate", async (message) => {
                         .setStyle(ButtonStyle.Primary)
                 )
 
-            message.channel.send({ embeds: [embed], components: [buttons] })
+
+            const embedVentil = new EmbedBuilder()
+                .setTitle("Controle de la ventilation")
+                .setColor("#a6d132")
+            const buttonsVentil = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId("Ventil")
+                        .setEmoji("🌬️")
+                        .setStyle(ButtonStyle.Secondary)
+                )
+
+            const ventMessage = await message.channel.send({ embeds: [embedVentil], components: [buttonsVentil] })
+            
+            const controlMessage = await message.channel.send({ embeds: [embed], components: [buttons] })
+
+            // save messages id in config
+            config.humControleMessage = humMessage.id
+            config.tempControleMessage = tempMessage.id
+            config.controlPannel = controlMessage.id
+
+            fs.writeFile("./config/config.json", JSON.stringify(config, null, 4), (err) => {
+                if (err) throw err;
+                console.log("The file has been saved!");
+            });
             break
         }
     }
@@ -139,7 +167,7 @@ client.on("interactionCreate", async (interaction) => {
             }
             case "Vapo10s": {
                 await interaction.deferUpdate();
-                vaporisations10s()
+                vaporisations()
                 break
             }
             case "MoonlightOn": {
@@ -165,7 +193,7 @@ client.on("interactionCreate", async (interaction) => {
                     vapoOFF()
                     // stop orage
                     orage = false
-                }, 15000);
+                }, config.heures.vapo.duree * 1000);
 
                 while (orage) {
                     //gen num between 300 and 700
@@ -187,6 +215,16 @@ client.on("interactionCreate", async (interaction) => {
                 await allumerLumiere()
                 await eteindreLumBleue()
                 break
+            }
+
+            case "Ventil": {
+                await interaction.deferUpdate();
+                ventilON()
+                setTimeout(() => {
+                    ventilOFF()
+                }, config.heures.ventil.duree * 1000);
+
+                break;
             }
 
             default: {
@@ -228,6 +266,7 @@ client.on("interactionCreate", async (interaction) => {
 
 
 async function allumerLumiere() {
+    log("Lumière allumée")
     var command = 'cm?cmnd=Power1%20On';
     var options = {
         url: `http://${config.ip}/${command}`,
@@ -250,6 +289,7 @@ async function eteindreLumieres() {
 }
 
 async function eteindreLumiere() {
+    log("Lumière éteinte")
     var command = 'cm?cmnd=Power1%20Off';
     var options = {
         url: `http://${config.ip}/${command}`,
@@ -268,6 +308,7 @@ async function eteindreLumiere() {
 
 // eteindre toute la prise
 async function eteindrePrise() {
+    log("Prise éteinte")
     for (let i = 0; i < 5; i++) {
         var command = 'cm?cmnd=Power' + i + '%20Off';
         var options = {
@@ -286,41 +327,17 @@ async function eteindrePrise() {
     }
 }
 
-function vaporisations10s() {
-    var command = 'cm?cmnd=Power' + 2 + '%20On';
-    var options = {
-        url: `http://${config.ip}/${command}`,
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-
-    request(options, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            console.log(body);
-        }
-    });
+function vaporisations() {
+    log("Vaporisation en cours")
+    vapoON()
     setTimeout(() => {
-        var command = 'cm?cmnd=Power' + 2 + '%20Off';
-        var options = {
-            url: `http://${config.ip}/${command}`,
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        };
-
-        request(options, function (error, response, body) {
-            if (!error && response.statusCode == 200) {
-                console.log(body);
-            }
-        });
-    }, 10 * 1000);
+        vapoOFF()
+    }, config.heures.vapo.duree * 1000);
 }
 
 
 function vapoON() {
+    log("Vaporisation allumée")
     var command = 'cm?cmnd=Power' + 2 + '%20On';
     var options = {
         url: `http://${config.ip}/${command}`,
@@ -338,6 +355,7 @@ function vapoON() {
 }
 
 function vapoOFF() {
+    log("Vaporisation arrêtée")
     var command = 'cm?cmnd=Power' + 2 + '%20Off';
     var options = {
         url: `http://${config.ip}/${command}`,
@@ -356,6 +374,7 @@ function vapoOFF() {
 
 
 function allumerLumBleue() {
+    log("Lumière bleue allumée")
     var command = 'cm?cmnd=Power' + 3 + '%20On';
     var options = {
         url: `http://${config.ip}/${command}`,
@@ -373,7 +392,44 @@ function allumerLumBleue() {
 }
 
 function eteindreLumBleue() {
+    log("Lumière bleue éteinte")
     var command = 'cm?cmnd=Power' + 3 + '%20Off';
+    var options = {
+        url: `http://${config.ip}/${command}`,
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    request(options, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            console.log(body);
+        }
+    });
+}
+
+function ventilON() {
+    log("Ventilation allumée")
+    var command = 'cm?cmnd=Power' + 4 + '%20On';
+    var options = {
+        url: `http://${config.ip}/${command}`,
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    request(options, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            console.log(body);
+        }
+    });
+}
+
+function ventilOFF() {
+    log("Ventilation éteinte")
+    var command = 'cm?cmnd=Power' + 4 + '%20Off';
     var options = {
         url: `http://${config.ip}/${command}`,
         method: 'GET',
@@ -397,12 +453,9 @@ async function wait(ms) {
     });
 }
 
-
-function genNumber(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
 async function plotingTempHum() {
+    log("Actualisation des graphiques")
+
     console.log("plotingTempHum")
     async function plot(data, color, data2, color2, labels) {
         const { ChartJSNodeCanvas } = require("chartjs-node-canvas");
@@ -650,8 +703,8 @@ async function plotingTempHum() {
 
 
 
-    const hotDevice = "0x00158d0008ce79dd"
-    const coldDevice = "0x00158d00033f09fa"
+    const hotDevice = "0x00158d00033f09fa"
+    const coldDevice = "0x00158d0008ce79dd"
     const controleChannel = await client.channels.fetch(config.controleChannel)
 
 
@@ -687,14 +740,20 @@ async function plotingTempHum() {
     })
 
     const f = fs.readdirSync('./data/logs')
-    const recentFiles = f.slice(Math.max(files.length - 25, 0))
-    const logList = []
+    const recentFiles = f.slice(Math.max(files.length - 26, 0))
+    let logList = []
     recentFiles.forEach(file => {
         logList.push({
             label: file.split(".")[0],
             value: file
         })
     })
+    if (logList.length > 25) {
+        logList = logList.slice(Math.max(logList.length - 25, 0))
+    }
+
+    logList = logList.reverse()
+
 
     const humPlot = new ActionRowBuilder()
         .addComponents(
@@ -765,4 +824,8 @@ async function plotingTempHum() {
         .setTimestamp();
     const controlePannel = await controleChannel.messages.fetch(config.controlPannel)
     controlePannel.edit({ embeds: [embed] })
+}
+
+function log (text) {
+    logChannel.send(`[${new Date().toLocaleString()}] ${text}`)
 }
