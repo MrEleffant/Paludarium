@@ -131,7 +131,7 @@ client.on("messageCreate", async (message) => {
                 )
 
             const ventMessage = await message.channel.send({ embeds: [embedVentil], components: [buttonsVentil] })
-            
+
             const controlMessage = await message.channel.send({ embeds: [embed], components: [buttons] })
 
             // save messages id in config
@@ -826,6 +826,6 @@ async function plotingTempHum() {
     controlePannel.edit({ embeds: [embed] })
 }
 
-function log (text) {
+function log(text) {
     logChannel.send(`[${new Date().toLocaleString()}] ${text}`)
 }
