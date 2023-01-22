@@ -1,0 +1,37 @@
+{
+    "lumiere": {
+        "name": "Lumiere",
+        "prise": 25,
+        "inter": 2
+    },
+    "lumiereBleue": {
+        "name": "Lumiere Bleue",
+        "prise": 25,
+        "inter": 3
+    },
+    "vaporisation": {
+        "name": "Vaporisation",
+        "prise": 25,
+        "inter": 1
+    },
+    "VentilationOut": {
+        "name": "Ventilation Out",
+        "prise": 25,
+        "inter": 4
+    },
+    "pompe": {
+        "name": "Pompe",
+        "prise": 26,
+        "inter": 3
+    },
+    "chauffage": {
+        "name": "Chauffage",
+        "prise": 26,
+        "inter": 2
+    },
+    "VentilationIn": {
+        "name": "Ventilation In",
+        "prise": 26,
+        "inter": 4
+    }
+}

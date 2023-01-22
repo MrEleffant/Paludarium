@@ -1,0 +1,1324 @@
+{
+ "lastHumPLot": "https://cdn.discordapp.com/attachments/1046446625146540063/1050544061183967252/file.jpg",
+ "lastTempPLot": "https://cdn.discordapp.com/attachments/1046446625146540063/1050544064195481661/file.jpg",
+ "00:04:12": {
+  "battery": 100,
+  "humidity": 31.78,
+  "linkquality": 52,
+  "power_outage_count": 19,
+  "pressure": 1009.9,
+  "temperature": 25.79,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "00:18:03": {
+  "battery": 100,
+  "humidity": 32.05,
+  "linkquality": 60,
+  "power_outage_count": 19,
+  "pressure": 1009.8,
+  "temperature": 25.28,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "00:21:58": {
+  "battery": 97,
+  "humidity": 44.22,
+  "linkquality": 5,
+  "power_outage_count": 36847,
+  "temperature": 22.16,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "00:24:34": {
+  "battery": 100,
+  "humidity": 32.41,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1009.8,
+  "temperature": 24.77,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "00:34:06": {
+  "battery": 100,
+  "humidity": 33.08,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1009.9,
+  "temperature": 24.26,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "00:47:07": {
+  "battery": 100,
+  "humidity": 33.78,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1009.7,
+  "temperature": 23.77,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "00:47:37": {
+  "battery": 100,
+  "humidity": 33.82,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1009.8,
+  "temperature": 23.79,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "01:07:30": {
+  "battery": 100,
+  "humidity": 34.41,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1009.4,
+  "temperature": 23.28,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "01:18:52": {
+  "battery": 97,
+  "humidity": 44.29,
+  "linkquality": 5,
+  "power_outage_count": 36847,
+  "temperature": 21.92,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "01:28:02": {
+  "battery": 100,
+  "humidity": 34.95,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1009.1,
+  "temperature": 22.95,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "01:44:44": {
+  "battery": 100,
+  "humidity": 35.2,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1009.1,
+  "temperature": 22.81,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "02:00:47": {
+  "battery": 100,
+  "humidity": 35.39,
+  "linkquality": 60,
+  "power_outage_count": 19,
+  "pressure": 1008.9,
+  "temperature": 22.67,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "02:14:50": {
+  "battery": 97,
+  "humidity": 43.53,
+  "linkquality": 5,
+  "power_outage_count": 36847,
+  "temperature": 21.85,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "02:36:20": {
+  "battery": 100,
+  "humidity": 35.68,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1008.8,
+  "temperature": 22.43,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "03:06:57": {
+  "battery": 97,
+  "humidity": 43.45,
+  "linkquality": 5,
+  "power_outage_count": 36847,
+  "temperature": 21.8,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "03:26:16": {
+  "battery": 100,
+  "humidity": 35.92,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1008.6,
+  "temperature": 22.26,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "03:29:17": {
+  "battery": 100,
+  "humidity": 35.95,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1008.6,
+  "temperature": 22.24,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "03:41:09": {
+  "battery": 100,
+  "humidity": 35.99,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1008.3,
+  "temperature": 22.23,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "04:02:21": {
+  "battery": 100,
+  "humidity": 36.03,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1008,
+  "temperature": 22.21,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "04:07:17": {
+  "battery": 97,
+  "humidity": 43.35,
+  "linkquality": 5,
+  "power_outage_count": 36847,
+  "temperature": 21.74,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "04:21:42": {
+  "battery": 97,
+  "humidity": 43.29,
+  "linkquality": 5,
+  "power_outage_count": 36847,
+  "temperature": 21.64,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "04:23:23": {
+  "battery": 100,
+  "humidity": 36.09,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1008,
+  "temperature": 22.14,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "04:32:05": {
+  "battery": 100,
+  "humidity": 36.07,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1007.8,
+  "temperature": 22.16,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "04:49:37": {
+  "battery": 100,
+  "humidity": 36.09,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1007.5,
+  "temperature": 22.06,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "05:00:15": {
+  "battery": 97,
+  "humidity": 43.08,
+  "linkquality": 5,
+  "power_outage_count": 36847,
+  "temperature": 21.71,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "05:19:30": {
+  "battery": 100,
+  "humidity": 36.11,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1007.4,
+  "temperature": 22.07,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "05:25:11": {
+  "battery": 100,
+  "humidity": 36.12,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1007.3,
+  "temperature": 22.03,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "05:58:49": {
+  "battery": 97,
+  "humidity": 43.06,
+  "linkquality": 5,
+  "power_outage_count": 36847,
+  "temperature": 21.7,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "06:02:45": {
+  "battery": 100,
+  "humidity": 36.15,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1007,
+  "temperature": 21.97,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "06:13:16": {
+  "battery": 100,
+  "humidity": 36.16,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1007,
+  "temperature": 22,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "06:41:40": {
+  "battery": 100,
+  "humidity": 36.17,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1006.7,
+  "temperature": 21.99,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "06:52:57": {
+  "battery": 97,
+  "humidity": 42.74,
+  "linkquality": 5,
+  "power_outage_count": 36847,
+  "temperature": 21.73,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "07:09:23": {
+  "battery": 100,
+  "humidity": 36.07,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1006.6,
+  "temperature": 22.03,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "07:41:17": {
+  "battery": 100,
+  "humidity": 36.07,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1006.5,
+  "temperature": 22.09,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "07:47:45": {
+  "battery": 97,
+  "humidity": 42.78,
+  "linkquality": 5,
+  "power_outage_count": 36847,
+  "temperature": 21.81,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "08:05:39": {
+  "battery": 100,
+  "humidity": 35.96,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1006.5,
+  "temperature": 22.06,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "08:46:54": {
+  "battery": 97,
+  "humidity": 42.52,
+  "linkquality": 7,
+  "power_outage_count": 36847,
+  "temperature": 21.8,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "08:53:25": {
+  "battery": 100,
+  "humidity": 35.94,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1006.2,
+  "temperature": 22.07,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "09:03:26": {
+  "battery": 100,
+  "humidity": 35.91,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1006.2,
+  "temperature": 22.07,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "09:18:40": {
+  "battery": 97,
+  "humidity": 49.35,
+  "linkquality": 5,
+  "power_outage_count": 36847,
+  "temperature": 21.99,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "09:33:40": {
+  "battery": 100,
+  "humidity": 40.49,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1005.9,
+  "temperature": 22.2,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "09:44:28": {
+  "battery": 97,
+  "humidity": 49.19,
+  "linkquality": 5,
+  "power_outage_count": 36847,
+  "temperature": 22.04,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "09:57:23": {
+  "battery": 100,
+  "humidity": 41.26,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1005.8,
+  "temperature": 22.2,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "10:03:24": {
+  "battery": 100,
+  "humidity": 41.24,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1005.7,
+  "temperature": 22.19,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "10:39:18": {
+  "battery": 100,
+  "humidity": 41.37,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1005.9,
+  "temperature": 22.13,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "10:42:17": {
+  "battery": 97,
+  "humidity": 48.84,
+  "linkquality": 5,
+  "power_outage_count": 36847,
+  "temperature": 21.88,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "10:54:29": {
+  "battery": 100,
+  "humidity": 41.34,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1005.9,
+  "temperature": 22.19,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "11:07:31": {
+  "battery": 100,
+  "humidity": 41.15,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1005.7,
+  "temperature": 22.19,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "11:31:54": {
+  "battery": 100,
+  "humidity": 40.69,
+  "linkquality": 60,
+  "power_outage_count": 19,
+  "pressure": 1005.4,
+  "temperature": 22.14,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "11:35:24": {
+  "battery": 97,
+  "humidity": 47.46,
+  "linkquality": 7,
+  "power_outage_count": 36847,
+  "temperature": 21.9,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "11:43:55": {
+  "battery": 100,
+  "humidity": 40.45,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1005.1,
+  "temperature": 22.2,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "11:47:26": {
+  "battery": 100,
+  "humidity": 40.36,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1005.1,
+  "temperature": 22.14,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "12:00:38": {
+  "battery": 100,
+  "humidity": 40.16,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1004.8,
+  "temperature": 22.16,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "12:22:20": {
+  "battery": 100,
+  "humidity": 39.72,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1004.6,
+  "temperature": 22.16,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "12:25:56": {
+  "battery": 97,
+  "humidity": 46.17,
+  "linkquality": 5,
+  "power_outage_count": 36847,
+  "temperature": 21.87,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "12:45:53": {
+  "battery": 100,
+  "humidity": 39.27,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1004.5,
+  "temperature": 22.19,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "12:55:35": {
+  "battery": 100,
+  "humidity": 39.07,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1004.3,
+  "temperature": 22.16,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "13:15:27": {
+  "battery": 100,
+  "humidity": 38.8,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1004,
+  "temperature": 22.1,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "13:22:14": {
+  "battery": 97,
+  "humidity": 45.07,
+  "linkquality": 5,
+  "power_outage_count": 36847,
+  "temperature": 21.84,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "13:27:28": {
+  "battery": 100,
+  "humidity": 38.6,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1003.7,
+  "temperature": 22.13,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "13:38:40": {
+  "battery": 100,
+  "humidity": 38.3,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1003.7,
+  "temperature": 22.16,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "14:06:23": {
+  "battery": 100,
+  "humidity": 37.87,
+  "linkquality": 60,
+  "power_outage_count": 19,
+  "pressure": 1003.5,
+  "temperature": 22.16,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "14:20:03": {
+  "battery": 97,
+  "humidity": 43.94,
+  "linkquality": 7,
+  "power_outage_count": 36847,
+  "temperature": 21.81,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "14:21:05": {
+  "battery": 100,
+  "humidity": 37.59,
+  "linkquality": 60,
+  "power_outage_count": 19,
+  "pressure": 1003.2,
+  "temperature": 22.07,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "14:31:06": {
+  "battery": 100,
+  "humidity": 37.56,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1002.9,
+  "temperature": 22.11,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "14:34:27": {
+  "battery": 100,
+  "humidity": 37.52,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1003,
+  "temperature": 22.13,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "14:58:01": {
+  "battery": 97,
+  "humidity": 43.34,
+  "linkquality": 5,
+  "power_outage_count": 36847,
+  "temperature": 21.78,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "15:09:01": {
+  "battery": 100,
+  "humidity": 37.1,
+  "linkquality": 60,
+  "power_outage_count": 19,
+  "pressure": 1002.6,
+  "temperature": 22.09,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "15:14:11": {
+  "battery": 97,
+  "humidity": 43.15,
+  "linkquality": 5,
+  "power_outage_count": 36847,
+  "temperature": 21.87,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "15:34:14": {
+  "battery": 100,
+  "humidity": 36.65,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1002.5,
+  "temperature": 22.13,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "15:45:56": {
+  "battery": 100,
+  "humidity": 36.51,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1002.3,
+  "temperature": 22.11,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "16:05:48": {
+  "battery": 97,
+  "humidity": 42.47,
+  "linkquality": 5,
+  "power_outage_count": 36847,
+  "temperature": 21.88,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "16:33:51": {
+  "battery": 100,
+  "humidity": 36.05,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1002.3,
+  "temperature": 22.13,
+  "voltage": 3015,
+  "device": "0x00158d0008ce79dd"
+ },
+ "16:42:42": {
+  "battery": 100,
+  "humidity": 36.05,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1002.3,
+  "temperature": 22.11,
+  "voltage": 3015,
+  "device": "0x00158d0008ce79dd"
+ },
+ "16:42:43": {
+  "battery": 100,
+  "humidity": 35.98,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1002,
+  "temperature": 22.11,
+  "voltage": 3015,
+  "device": "0x00158d0008ce79dd"
+ },
+ "17:02:01": {
+  "battery": 97,
+  "humidity": 41.77,
+  "linkquality": 7,
+  "power_outage_count": 36847,
+  "temperature": 21.81,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "17:33:18": {
+  "battery": 100,
+  "humidity": 35.42,
+  "linkquality": 63,
+  "power_outage_count": 19,
+  "pressure": 1001.9,
+  "temperature": 22.11,
+  "voltage": 3015,
+  "device": "0x00158d0008ce79dd"
+ },
+ "17:45:10": {
+  "battery": 100,
+  "humidity": 35.34,
+  "linkquality": 60,
+  "power_outage_count": 19,
+  "pressure": 1001.8,
+  "temperature": 22.19,
+  "voltage": 3015,
+  "device": "0x00158d0008ce79dd"
+ },
+ "18:01:31": {
+  "battery": 97,
+  "humidity": 41.11,
+  "linkquality": 7,
+  "power_outage_count": 36847,
+  "temperature": 21.84,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "18:14:03": {
+  "battery": 100,
+  "humidity": 37.01,
+  "linkquality": 49,
+  "power_outage_count": 19,
+  "pressure": 1002,
+  "temperature": 22.71,
+  "voltage": 3015,
+  "device": "0x00158d0008ce79dd"
+ },
+ "18:20:04": {
+  "battery": 100,
+  "humidity": 35.46,
+  "linkquality": 49,
+  "power_outage_count": 19,
+  "pressure": 1002,
+  "temperature": 23.22,
+  "voltage": 3015,
+  "device": "0x00158d0008ce79dd"
+ },
+ "18:25:05": {
+  "battery": 100,
+  "humidity": 34.34,
+  "linkquality": 49,
+  "power_outage_count": 19,
+  "pressure": 1001.9,
+  "temperature": 23.65,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "18:26:55": {
+  "battery": 100,
+  "humidity": 34.25,
+  "linkquality": 52,
+  "power_outage_count": 19,
+  "pressure": 1001.9,
+  "temperature": 23.73,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "18:35:07": {
+  "battery": 100,
+  "humidity": 33.49,
+  "linkquality": 52,
+  "power_outage_count": 19,
+  "pressure": 1001.9,
+  "temperature": 24.26,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "18:45:28": {
+  "battery": 100,
+  "humidity": 34.1,
+  "linkquality": 52,
+  "power_outage_count": 19,
+  "pressure": 1001.7,
+  "temperature": 24.77,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "18:55:23": {
+  "battery": 97,
+  "humidity": 41.27,
+  "linkquality": 7,
+  "power_outage_count": 36847,
+  "temperature": 22.05,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "19:01:00": {
+  "battery": 100,
+  "humidity": 33.02,
+  "linkquality": 49,
+  "power_outage_count": 19,
+  "pressure": 1001.8,
+  "temperature": 25.28,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "19:17:02": {
+  "battery": 100,
+  "humidity": 31.97,
+  "linkquality": 52,
+  "power_outage_count": 19,
+  "pressure": 1001.9,
+  "temperature": 25.46,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "19:44:25": {
+  "battery": 100,
+  "humidity": 30.94,
+  "linkquality": 57,
+  "power_outage_count": 19,
+  "pressure": 1001.5,
+  "temperature": 25.59,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "19:46:50": {
+  "battery": 97,
+  "humidity": 41.26,
+  "linkquality": 21,
+  "power_outage_count": 36847,
+  "temperature": 22.11,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "20:16:59": {
+  "battery": 100,
+  "humidity": 30.14,
+  "linkquality": 55,
+  "power_outage_count": 19,
+  "pressure": 1001.4,
+  "temperature": 25.79,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "20:23:02": {
+  "battery": 97,
+  "humidity": 41.57,
+  "linkquality": 0,
+  "power_outage_count": 36847,
+  "temperature": 22.29,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "20:41:53": {
+  "battery": 97,
+  "humidity": 41.55,
+  "linkquality": 15,
+  "power_outage_count": 36847,
+  "temperature": 22.44,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "20:46:42": {
+  "battery": 100,
+  "humidity": 29.94,
+  "linkquality": 49,
+  "power_outage_count": 19,
+  "pressure": 1001.3,
+  "temperature": 25.89,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "21:08:05": {
+  "battery": 100,
+  "humidity": 30.11,
+  "linkquality": 42,
+  "power_outage_count": 19,
+  "pressure": 1001.2,
+  "temperature": 25.77,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "21:36:59": {
+  "battery": 100,
+  "humidity": 45.87,
+  "linkquality": 55,
+  "power_outage_count": 19,
+  "pressure": 1001,
+  "temperature": 25.33,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "21:37:09": {
+  "battery": 100,
+  "humidity": 52.01,
+  "linkquality": 47,
+  "power_outage_count": 19,
+  "pressure": 1001.1,
+  "temperature": 25.07,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "21:37:19": {
+  "battery": 100,
+  "humidity": 40.3,
+  "linkquality": 47,
+  "power_outage_count": 19,
+  "pressure": 1001,
+  "temperature": 24.99,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "21:37:39": {
+  "battery": 100,
+  "humidity": 33.87,
+  "linkquality": 47,
+  "power_outage_count": 19,
+  "pressure": 1001.1,
+  "temperature": 25.07,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "21:40:22": {
+  "battery": 97,
+  "humidity": 41.64,
+  "linkquality": 18,
+  "power_outage_count": 36847,
+  "temperature": 22.33,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "21:41:30": {
+  "battery": 100,
+  "humidity": 31.32,
+  "linkquality": 47,
+  "power_outage_count": 19,
+  "pressure": 1000.9,
+  "temperature": 25.58,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:02:02": {
+  "battery": 100,
+  "humidity": 30.36,
+  "linkquality": 34,
+  "power_outage_count": 19,
+  "pressure": 1001.1,
+  "temperature": 26.06,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:04:53": {
+  "battery": 100,
+  "humidity": 48.72,
+  "linkquality": 0,
+  "power_outage_count": 19,
+  "pressure": 1001,
+  "temperature": 25.75,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:05:14": {
+  "battery": 100,
+  "humidity": 40.75,
+  "linkquality": 21,
+  "power_outage_count": 19,
+  "pressure": 1001,
+  "temperature": 25.32,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:06:04": {
+  "battery": 100,
+  "humidity": 51.47,
+  "linkquality": 23,
+  "power_outage_count": 19,
+  "pressure": 1001.1,
+  "temperature": 24.85,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:06:14": {
+  "battery": 100,
+  "humidity": 44.59,
+  "linkquality": 31,
+  "power_outage_count": 19,
+  "pressure": 1000.9,
+  "temperature": 24.77,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:06:24": {
+  "battery": 100,
+  "humidity": 52.05,
+  "linkquality": 21,
+  "power_outage_count": 19,
+  "pressure": 1000.9,
+  "temperature": 25.05,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:06:45": {
+  "battery": 100,
+  "humidity": 61.37,
+  "linkquality": 31,
+  "power_outage_count": 19,
+  "pressure": 1001,
+  "temperature": 25.25,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:06:55": {
+  "battery": 100,
+  "humidity": 54.56,
+  "linkquality": 0,
+  "power_outage_count": 19,
+  "pressure": 1000.9,
+  "temperature": 25.19,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:07:15": {
+  "battery": 100,
+  "humidity": 41.49,
+  "linkquality": 34,
+  "power_outage_count": 19,
+  "pressure": 1001,
+  "temperature": 25.02,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:07:35": {
+  "battery": 100,
+  "humidity": 35.49,
+  "linkquality": 34,
+  "power_outage_count": 19,
+  "pressure": 1001,
+  "temperature": 25.07,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:07:56": {
+  "battery": 100,
+  "humidity": 62.33,
+  "linkquality": 26,
+  "power_outage_count": 19,
+  "pressure": 1000.9,
+  "temperature": 25.48,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:08:06": {
+  "battery": 100,
+  "humidity": 51.44,
+  "linkquality": 13,
+  "power_outage_count": 19,
+  "pressure": 1000.9,
+  "temperature": 25.49,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:08:26": {
+  "battery": 100,
+  "humidity": 64.92,
+  "linkquality": 26,
+  "power_outage_count": 19,
+  "pressure": 1001,
+  "temperature": 25.38,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:08:46": {
+  "battery": 100,
+  "humidity": 53.86,
+  "linkquality": 18,
+  "power_outage_count": 19,
+  "pressure": 1001,
+  "temperature": 25.35,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:08:57": {
+  "battery": 100,
+  "humidity": 41.09,
+  "linkquality": 15,
+  "power_outage_count": 19,
+  "pressure": 1001,
+  "temperature": 25.36,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:09:37": {
+  "battery": 100,
+  "humidity": 34.76,
+  "linkquality": 23,
+  "power_outage_count": 19,
+  "pressure": 1000.9,
+  "temperature": 25.28,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:10:27": {
+  "battery": 100,
+  "humidity": 44.1,
+  "linkquality": 0,
+  "power_outage_count": 19,
+  "pressure": 1000.9,
+  "temperature": 25.28,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:11:58": {
+  "battery": 100,
+  "humidity": 52.77,
+  "linkquality": 15,
+  "power_outage_count": 19,
+  "pressure": 1000.9,
+  "temperature": 25.07,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:12:08": {
+  "battery": 100,
+  "humidity": 38.31,
+  "linkquality": 34,
+  "power_outage_count": 19,
+  "pressure": 1000.9,
+  "temperature": 25.05,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:14:38": {
+  "battery": 100,
+  "humidity": 55.1,
+  "linkquality": 36,
+  "power_outage_count": 19,
+  "pressure": 1000.9,
+  "temperature": 24.7,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:14:49": {
+  "battery": 100,
+  "humidity": 41.64,
+  "linkquality": 47,
+  "power_outage_count": 19,
+  "pressure": 1001,
+  "temperature": 24.55,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:15:19": {
+  "battery": 100,
+  "humidity": 34.76,
+  "linkquality": 47,
+  "power_outage_count": 19,
+  "pressure": 1000.9,
+  "temperature": 24.51,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:32:31": {
+  "battery": 100,
+  "humidity": 32.41,
+  "linkquality": 23,
+  "power_outage_count": 19,
+  "pressure": 1000.8,
+  "temperature": 24,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:32:59": {
+  "battery": 97,
+  "humidity": 41.46,
+  "linkquality": 15,
+  "power_outage_count": 36847,
+  "temperature": 22.25,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ },
+ "22:41:02": {
+  "battery": 100,
+  "humidity": 59.48,
+  "linkquality": 49,
+  "power_outage_count": 19,
+  "pressure": 1000.7,
+  "temperature": 23.93,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:41:12": {
+  "battery": 100,
+  "humidity": 49.14,
+  "linkquality": 73,
+  "power_outage_count": 19,
+  "pressure": 1000.7,
+  "temperature": 23.93,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:41:22": {
+  "battery": 100,
+  "humidity": 66.15,
+  "linkquality": 57,
+  "power_outage_count": 19,
+  "pressure": 1000.7,
+  "temperature": 24.13,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:42:03": {
+  "battery": 100,
+  "humidity": 49.7,
+  "linkquality": 76,
+  "power_outage_count": 19,
+  "pressure": 1000.8,
+  "temperature": 24.57,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:42:13": {
+  "battery": 100,
+  "humidity": 39.69,
+  "linkquality": 76,
+  "power_outage_count": 19,
+  "pressure": 1000.8,
+  "temperature": 24.58,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:44:23": {
+  "battery": 100,
+  "humidity": 33.67,
+  "linkquality": 86,
+  "power_outage_count": 19,
+  "pressure": 1000.8,
+  "temperature": 24.19,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:52:34": {
+  "battery": 100,
+  "humidity": 33.15,
+  "linkquality": 76,
+  "power_outage_count": 19,
+  "pressure": 1000.8,
+  "temperature": 23.73,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "22:53:25": {
+  "battery": 100,
+  "humidity": 33.05,
+  "linkquality": 84,
+  "power_outage_count": 19,
+  "pressure": 1000.7,
+  "temperature": 23.65,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "23:12:38": {
+  "battery": 100,
+  "humidity": 33.18,
+  "linkquality": 86,
+  "power_outage_count": 19,
+  "pressure": 1000.4,
+  "temperature": 23.48,
+  "voltage": 3025,
+  "device": "0x00158d0008ce79dd"
+ },
+ "23:31:13": {
+  "battery": 97,
+  "humidity": 41.24,
+  "linkquality": 13,
+  "power_outage_count": 36847,
+  "temperature": 22.11,
+  "voltage": 2995,
+  "device": "0x00158d00033f09fa"
+ }
+}

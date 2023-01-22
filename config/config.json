@@ -1,12 +1,20 @@
 {
     "guild": "997149313299910696",
+    "channels": {
+        "plots": "1030201462195765368",
+        "lumieres": "1066817900578615348",
+        "vaporisation": "1066818042652283012",
+        "ventilation": "1066819317552910407",
+        "autre": "1066818197749256262"
+    },
     "logChannel": "1065372169137291396",
     "plotChannel": "1046446625146540063",
     "controleChannel": "1030201462195765368",
-    "controlPannel": "1065309221106761748",
-    "humControleMessage": "1065309217348661469",
-    "tempControleMessage": "1065309218841833503",
+    "controlPannel": "1066824680826228767",
+    "humControleMessage": "1066824678708097155",
+    "tempControleMessage": "1066824679689564310",
     "ip": "192.168.1.25",
+    "ipLocal": "192.168.1",
     "prefix": "?",
     "heures": {
         "jour": {

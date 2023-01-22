@@ -15,40 +15,61 @@ const client = new Client({
 
 let guild, logChannel
 const config = require("./config/config.json");
+const equipements = require("./config/equipements.json");
 
 client.login(process.env.TOKEN);
 
 client.on("ready", async () => {
     guild = await client.guilds.fetch(config.guild)
-    logChannel = await client.channels.fetch(config.logChannel)
+    logChannel = await guild.channels.fetch(config.logChannel)
 
     console.log(`${client.user.tag} is ready!`)
     log("Bot démarré")
 
-    await eteindrePrise()
 
-    await wait(2000)
-    // check if we are after 10am and before 10pm
-    const now = new Date()
-
-    if (now.getHours() >= config.heures.jour.debut && now.getHours() < config.heures.jour.fin) {
-        allumerLumiere()
-    } else if (now.getHours() >= config.heures.crepuscule.debut && now.getHours() < config.heures.crepuscule.fin) {
-        allumerLumBleue()
-    } else {
-        eteindreLumieres()
+    // eteindre tous les equipements
+    for (const eqpt in equipements) {
+        console.log(`Eteindre ${eqpt}`)
+        eteindreEquipement(equipements[eqpt])
     }
 
-    let debutJour = new cron.CronJob(`00 ${config.heures.jour.debut} * * *`, allumerLumiere);
-    debutJour.start();
-    let finJour = new cron.CronJob(`00 ${config.heures.jour.fin} * * *`, () => {
-        allumerLumBleue()
-        eteindreLumiere()
+    await wait(2000)
+
+    // allumer la pompe et le chauffage 
+    allumerEquipement(equipements.pompe)
+    allumerEquipement(equipements.chauffage)
+
+    // check if we are after 10am and before 10pm
+    await wait(2000)
+    const now = new Date()
+    console.log(now.getHours() >= config.heures.crepuscule.debut)
+    console.log(now.getHours() < config.heures.crepuscule.fin)
+    if (now.getHours() >= config.heures.jour.debut && now.getHours() < config.heures.jour.fin) {
+        allumerEquipement(equipements.lumiere)
+    } else if (now.getHours() >= config.heures.crepuscule.debut && now.getHours() < (config.heures.crepuscule.fin + 24)) {
+        console.log("Crepuscule")
+        allumerEquipement(equipements.lumiereBleue)
+    } else {
+        eteindreEquipement(equipements.lumiere)
+        eteindreEquipement(equipements.lumiereBleue)
+    }
+
+    let debutJour = new cron.CronJob(`00 ${config.heures.jour.debut} * * *`, () => {
+        allumerEquipement(equipements.lumiere)
     });
-    finJour.start();
+    debutJour.start();
+
+    let crepuscule = new cron.CronJob(`00 ${config.heures.jour.fin} * * *`, () => {
+        allumerEquipement(equipements.lumiereBleue)
+        eteindreEquipement(equipements.lumiere)
+    });
+    crepuscule.start();
 
 
-    let nuit = new cron.CronJob(`00 ${config.heures.crepuscule.fin} * * *`, eteindreLumieres);
+    let nuit = new cron.CronJob(`00 ${config.heures.crepuscule.fin} * * *`, () => {
+        eteindreEquipement(equipements.lumiere)
+        eteindreEquipement(equipements.lumiereBleue)
+    });
     nuit.start();
 
     let vapo = new cron.CronJob(`00  ${config.heures.vapo.debut}-${config.heures.vapo.fin}/${config.heures.vapo.ratio} * * *`, vaporisations);
@@ -71,6 +92,16 @@ client.on("messageCreate", async (message) => {
         case "setup": {
             if (!message.member.permissions.has("ADMINISTRATOR")) break
             message.delete();
+
+            // controle des stats
+            const buttonsPlot = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId("refreshPlot")
+                        .setEmoji("🔄")
+                        .setStyle(ButtonStyle.Primary)
+                )
+
             const humEmbed = new EmbedBuilder()
                 .setTitle("Humidité")
                 .setColor("#3C63AD")
@@ -86,7 +117,24 @@ client.on("messageCreate", async (message) => {
             const embed = new EmbedBuilder()
                 .setTitle("Controle du paludarium")
                 .setColor("#a6d132")
-            const buttons = new ActionRowBuilder()
+
+            const controlMessage = await message.channel.send({ embeds: [embed], components: [buttonsPlot] })
+
+            // save messages id in config
+            config.humControleMessage = humMessage.id
+            config.tempControleMessage = tempMessage.id
+            config.controlPannel = controlMessage.id
+
+            fs.writeFile("./config/config.json", JSON.stringify(config, null, 4), (err) => {
+                if (err) throw err;
+                console.log("The file has been saved!");
+            });
+
+            // controle de la lumière
+            const embedLumiere = new EmbedBuilder()
+                .setTitle("Lumière")
+                .setColor("#a6d132")
+            const buttonsLumiere = new ActionRowBuilder()
                 .addComponents(
                     new ButtonBuilder()
                         .setCustomId("lightOn")
@@ -104,7 +152,14 @@ client.on("messageCreate", async (message) => {
                         .setCustomId("lightOff")
                         .setEmoji("🌑")
                         .setStyle(ButtonStyle.Secondary)
-                )
+                );
+            (await client.channels.fetch(config.channels.lumieres)).send({ embeds: [embedLumiere], components: [buttonsLumiere] })
+
+            // controle de la vaporisation
+            const embedVapo = new EmbedBuilder()
+                .setTitle("Vaporisation")
+                .setColor("#a6d132")
+            const buttonsVapo = new ActionRowBuilder()
                 .addComponents(
                     new ButtonBuilder()
                         .setCustomId("Vapo10s")
@@ -116,33 +171,63 @@ client.on("messageCreate", async (message) => {
                         .setCustomId("Orage")
                         .setEmoji("⛈️")
                         .setStyle(ButtonStyle.Primary)
-                )
+                );
+            (await client.channels.fetch(config.channels.vaporisation)).send({ embeds: [embedVapo], components: [buttonsVapo] })
 
 
-            const embedVentil = new EmbedBuilder()
-                .setTitle("Controle de la ventilation")
+            // controle de la ventilation
+            const embedVent = new EmbedBuilder()
+                .setTitle("Ventilation")
                 .setColor("#a6d132")
-            const buttonsVentil = new ActionRowBuilder()
+            const buttonsVent = new ActionRowBuilder()
                 .addComponents(
                     new ButtonBuilder()
                         .setCustomId("Ventil")
                         .setEmoji("🌬️")
                         .setStyle(ButtonStyle.Secondary)
+                );
+            (await client.channels.fetch(config.channels.ventilation)).send({ embeds: [embedVent], components: [buttonsVent] })
+
+            // controle autres
+            // pompe
+            const embedPompe = new EmbedBuilder()
+                .setTitle("Pompe")
+                .setColor("#a6d132")
+            const buttonsPompe = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId("Pompe_On")
+                        .setEmoji("🟢")
+                        .setStyle(ButtonStyle.Primary)
                 )
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId("Pompe_Off")
+                        .setEmoji("🔴")
+                        .setStyle(ButtonStyle.Secondary)
+                );
+            (await client.channels.fetch(config.channels.autre)).send({ embeds: [embedPompe], components: [buttonsPompe] })
 
-            const ventMessage = await message.channel.send({ embeds: [embedVentil], components: [buttonsVentil] })
 
-            const controlMessage = await message.channel.send({ embeds: [embed], components: [buttons] })
+            // chauffage
+            const embedChauffage = new EmbedBuilder()
+                .setTitle("Chauffage")
+                .setColor("#a6d132")
+            const buttonsChauffage = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId("Chauffage_On")
+                        .setEmoji("🟢")
+                        .setStyle(ButtonStyle.Primary)
+                )
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId("Chauffage_Off")
+                        .setEmoji("🔴")
+                        .setStyle(ButtonStyle.Secondary)
+                );
+            (await client.channels.fetch(config.channels.autre)).send({ embeds: [embedChauffage], components: [buttonsChauffage] })
 
-            // save messages id in config
-            config.humControleMessage = humMessage.id
-            config.tempControleMessage = tempMessage.id
-            config.controlPannel = controlMessage.id
-
-            fs.writeFile("./config/config.json", JSON.stringify(config, null, 4), (err) => {
-                if (err) throw err;
-                console.log("The file has been saved!");
-            });
             break
         }
     }
@@ -156,13 +241,14 @@ client.on("interactionCreate", async (interaction) => {
         switch (interactionId) {
             case "lightOn": {
                 await interaction.deferUpdate();
-                allumerLumiere()
-                eteindreLumBleue()
+                allumerEquipement(equipements.lumiere)
+                eteindreEquipement(equipements.lumiereBleue)
                 break
             }
             case "lightOff": {
                 await interaction.deferUpdate();
-                eteindreLumieres()
+                eteindreEquipement(equipements.lumiere)
+                eteindreEquipement(equipements.lumiereBleue)
                 break
             }
             case "Vapo10s": {
@@ -172,25 +258,26 @@ client.on("interactionCreate", async (interaction) => {
             }
             case "MoonlightOn": {
                 await interaction.deferUpdate();
-                await eteindreLumiere()
-                await allumerLumBleue()
+                allumerEquipement(equipements.lumiereBleue)
+                eteindreEquipement(equipements.lumiere)
                 break
             }
 
             case "Orage": {
                 await interaction.deferUpdate();
                 // init de l'orage
-                await eteindreLumiere()
-                await allumerLumBleue()
+                eteindreEquipement(equipements.lumiere)
+                allumerEquipement(equipements.lumiereBleue)
+
                 await wait(2000)
 
                 // lancer la pluie
-                await vapoON() // remove comment
+                allumerEquipement(equipements.vaporisation)
 
                 let orage = true
 
                 setTimeout(() => {
-                    vapoOFF()
+                    eteindreEquipement(equipements.vaporisation)
                     // stop orage
                     orage = false
                 }, config.heures.vapo.duree * 1000);
@@ -199,31 +286,57 @@ client.on("interactionCreate", async (interaction) => {
                     //gen num between 300 and 700
                     const time = Math.floor(Math.random() * (600 - 200 + 1) + 200)
                     console.log({ time })
-                    await allumerLumiere()
+                    allumerEquipement(equipements.lumiere)
 
                     await wait(time)
-                    await eteindreLumiere()
+                    eteindreEquipement(equipements.lumiere)
 
                     const inter = Math.floor(Math.random() * (4000 - 2000 + 1) + 2000)
-                    console.log({ inter })
                     await wait(inter)
                 }
 
                 // couper la pluie 
                 // allumer la lumiere
                 await wait(1000)
-                await allumerLumiere()
-                await eteindreLumBleue()
+                allumerEquipement(equipements.lumiere)
+                eteindreEquipement(equipements.lumiereBleue)
                 break
             }
 
             case "Ventil": {
                 await interaction.deferUpdate();
-                ventilON()
+                allumerEquipement(equipements.VentilationIn)
+                allumerEquipement(equipements.VentilationOut)
                 setTimeout(() => {
-                    ventilOFF()
+                    eteindreEquipement(equipements.VentilationIn)
+                    eteindreEquipement(equipements.VentilationOut)
                 }, config.heures.ventil.duree * 1000);
 
+                break;
+            }
+            case "refreshPlot": {
+                await interaction.deferUpdate();
+                plotingTempHum()
+                break;
+            }
+
+            case "Pompe": {
+                await interaction.deferUpdate();
+                if (arg === "On") {
+                    allumerEquipement(equipements.pompe)
+                } else {
+                    eteindreEquipement(equipements.pompe)
+                }
+                break;
+            }
+
+            case "Chauffage": {
+                await interaction.deferUpdate();
+                if (arg === "On") {
+                    allumerEquipement(equipements.chauffage)
+                } else {
+                    eteindreEquipement(equipements.chauffage)
+                }
                 break;
             }
 
@@ -264,188 +377,12 @@ client.on("interactionCreate", async (interaction) => {
     }
 })
 
-
-async function allumerLumiere() {
-    log("Lumière allumée")
-    var command = 'cm?cmnd=Power1%20On';
-    var options = {
-        url: `http://${config.ip}/${command}`,
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-
-    await request(options, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            console.log(body);
-        }
-    });
-}
-
-async function eteindreLumieres() {
-    eteindreLumiere()
-    eteindreLumBleue()
-}
-
-async function eteindreLumiere() {
-    log("Lumière éteinte")
-    var command = 'cm?cmnd=Power1%20Off';
-    var options = {
-        url: `http://${config.ip}/${command}`,
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-
-    await request(options, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            console.log(body);
-        }
-    });
-}
-
-// eteindre toute la prise
-async function eteindrePrise() {
-    log("Prise éteinte")
-    for (let i = 0; i < 5; i++) {
-        var command = 'cm?cmnd=Power' + i + '%20Off';
-        var options = {
-            url: `http://${config.ip}/${command}`,
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        };
-
-        await request(options, function (error, response, body) {
-            if (!error && response.statusCode == 200) {
-                console.log(body);
-            }
-        });
-    }
-}
-
 function vaporisations() {
-    log("Vaporisation en cours")
-    vapoON()
+    allumerEquipement(equipements.vaporisation)
     setTimeout(() => {
-        vapoOFF()
+        eteindreEquipement(equipements.vaporisation)
     }, config.heures.vapo.duree * 1000);
 }
-
-
-function vapoON() {
-    log("Vaporisation allumée")
-    var command = 'cm?cmnd=Power' + 2 + '%20On';
-    var options = {
-        url: `http://${config.ip}/${command}`,
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-
-    request(options, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            console.log(body);
-        }
-    });
-}
-
-function vapoOFF() {
-    log("Vaporisation arrêtée")
-    var command = 'cm?cmnd=Power' + 2 + '%20Off';
-    var options = {
-        url: `http://${config.ip}/${command}`,
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-
-    request(options, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            console.log(body);
-        }
-    });
-}
-
-
-function allumerLumBleue() {
-    log("Lumière bleue allumée")
-    var command = 'cm?cmnd=Power' + 3 + '%20On';
-    var options = {
-        url: `http://${config.ip}/${command}`,
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-
-    request(options, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            console.log(body);
-        }
-    });
-}
-
-function eteindreLumBleue() {
-    log("Lumière bleue éteinte")
-    var command = 'cm?cmnd=Power' + 3 + '%20Off';
-    var options = {
-        url: `http://${config.ip}/${command}`,
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-
-    request(options, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            console.log(body);
-        }
-    });
-}
-
-function ventilON() {
-    log("Ventilation allumée")
-    var command = 'cm?cmnd=Power' + 4 + '%20On';
-    var options = {
-        url: `http://${config.ip}/${command}`,
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-
-    request(options, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            console.log(body);
-        }
-    });
-}
-
-function ventilOFF() {
-    log("Ventilation éteinte")
-    var command = 'cm?cmnd=Power' + 4 + '%20Off';
-    var options = {
-        url: `http://${config.ip}/${command}`,
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-
-    request(options, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            console.log(body);
-        }
-    });
-}
-
-
 
 async function wait(ms) {
     return new Promise(resolve => {
@@ -704,7 +641,7 @@ async function plotingTempHum() {
 
 
     const hotDevice = "0x00158d00033f09fa"
-    const coldDevice = "0x00158d0008ce79dd"
+    const coldDevice = "0x00158d0008cf23c5"
     const controleChannel = await client.channels.fetch(config.controleChannel)
 
 
@@ -828,4 +765,46 @@ async function plotingTempHum() {
 
 function log(text) {
     logChannel.send(`[${new Date().toLocaleString()}] ${text}`)
+}
+
+async function allumerEquipement(eqpt) {
+    const prise = eqpt.prise
+    const inter = eqpt.inter
+
+    log(`Equipement : ${eqpt.name} - ON`)
+
+    var command = 'cm?cmnd=Power' + inter + '%20On';
+    var options = {
+        url: `http://192.168.1.${prise}/${command}`,
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    request(options, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            console.log(body);
+        }
+    });
+}
+
+async function eteindreEquipement(eqpt) {
+    const prise = eqpt.prise
+    const inter = eqpt.inter
+
+    log(`Equipement : ${eqpt.name} - OFF`)
+
+    var command = 'cm?cmnd=Power' + inter + '%20Off';
+    var options = {
+        url: `http://192.168.1.${prise}/${command}`,
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    request(options, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            console.log(body);
+        }
+    });
 }
