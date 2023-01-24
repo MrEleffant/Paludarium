@@ -42,8 +42,7 @@ client.on("ready", async () => {
     // check if we are after 10am and before 10pm
     await wait(2000)
     const now = new Date()
-    console.log(now.getHours() >= config.heures.crepuscule.debut)
-    console.log(now.getHours() < config.heures.crepuscule.fin)
+
     if (now.getHours() >= config.heures.jour.debut && now.getHours() < config.heures.jour.fin) {
         allumerEquipement(equipements.lumiere)
     } else if (now.getHours() >= config.heures.crepuscule.debut && now.getHours() < (config.heures.crepuscule.fin + 24)) {
@@ -93,141 +92,213 @@ client.on("messageCreate", async (message) => {
             if (!message.member.permissions.has("ADMINISTRATOR")) break
             message.delete();
 
-            // controle des stats
-            const buttonsPlot = new ActionRowBuilder()
-                .addComponents(
-                    new ButtonBuilder()
-                        .setCustomId("refreshPlot")
-                        .setEmoji("🔄")
-                        .setStyle(ButtonStyle.Primary)
-                )
+            switch (args[0]) {
+                case "plot": {
+                    const buttonsPlot = new ActionRowBuilder()
+                        .addComponents(
+                            new ButtonBuilder()
+                                .setCustomId("refreshPlot")
+                                .setEmoji("🔄")
+                                .setStyle(ButtonStyle.Primary)
+                        )
 
-            const humEmbed = new EmbedBuilder()
-                .setTitle("Humidité")
-                .setColor("#3C63AD")
-                .setTimestamp()
-            const tempEmbed = new EmbedBuilder()
-                .setTitle("Température")
-                .setColor("#A23923")
-                .setTimestamp()
-            const humMessage = await message.channel.send({ embeds: [humEmbed] })
-            const tempMessage = await message.channel.send({ embeds: [tempEmbed] })
+                    const humEmbed = new EmbedBuilder()
+                        .setTitle("Humidité")
+                        .setColor("#3C63AD")
+                        .setTimestamp()
+                    const tempEmbed = new EmbedBuilder()
+                        .setTitle("Température")
+                        .setColor("#A23923")
+                        .setTimestamp()
+                    const humMessage = await message.channel.send({ embeds: [humEmbed] })
+                    const tempMessage = await message.channel.send({ embeds: [tempEmbed] })
+                    const embed = new EmbedBuilder()
+                        .setTitle("Controle du paludarium")
+                        .setColor("#a6d132")
+
+                    const controlMessage = await message.channel.send({ embeds: [embed], components: [buttonsPlot] })
+
+                    // save messages id in config
+                    config.humControleMessage = humMessage.id
+                    config.tempControleMessage = tempMessage.id
+                    config.controlPannel = controlMessage.id
+
+                    break;
+                }
+
+                case "lum": {
+                    const embedLumiere = new EmbedBuilder()
+                        .setTitle("Lumière")
+                        .setColor("#a6d132")
+                    const buttonsLumiere = new ActionRowBuilder()
+                        .addComponents(
+                            new ButtonBuilder()
+                                .setCustomId("lightOn")
+                                .setEmoji("🔆")
+                                .setStyle(ButtonStyle.Success)
+                        )
+                        .addComponents(
+                            new ButtonBuilder()
+                                .setCustomId("MoonlightOn")
+                                .setEmoji("🌕")
+                                .setStyle(ButtonStyle.Primary)
+                        )
+                        .addComponents(
+                            new ButtonBuilder()
+                                .setCustomId("lightOff")
+                                .setEmoji("🌑")
+                                .setStyle(ButtonStyle.Secondary)
+                        );
+                    (await client.channels.fetch(config.channels.lumieres)).send({ embeds: [embedLumiere], components: [buttonsLumiere] })
+                    break
+                }
+
+                case "vapo": {
+                    const embedVapo = new EmbedBuilder()
+                        .setTitle("Vaporisation")
+                        .setColor("#a6d132")
+                    const buttonsVapo = new ActionRowBuilder()
+                        .addComponents(
+                            new ButtonBuilder()
+                                .setCustomId("Vapo10s")
+                                .setEmoji("💧")
+                                .setStyle(ButtonStyle.Primary)
+                        )
+                        .addComponents(
+                            new ButtonBuilder()
+                                .setCustomId("Orage")
+                                .setEmoji("⛈️")
+                                .setStyle(ButtonStyle.Primary)
+                        );
+                    (await client.channels.fetch(config.channels.vaporisation)).send({ embeds: [embedVapo], components: [buttonsVapo] })
+                }
+
+                case "autre": {
+                    const embedPompe = new EmbedBuilder()
+                        .setTitle("Pompe")
+                        .setColor("#a6d132")
+                    const buttonsPompe = new ActionRowBuilder()
+                        .addComponents(
+                            new ButtonBuilder()
+                                .setCustomId("Pompe_On")
+                                .setEmoji("🟢")
+                                .setStyle(ButtonStyle.Primary)
+                        )
+                        .addComponents(
+                            new ButtonBuilder()
+                                .setCustomId("Pompe_Off")
+                                .setEmoji("🔴")
+                                .setStyle(ButtonStyle.Secondary)
+                        );
+                    (await client.channels.fetch(config.channels.autre)).send({ embeds: [embedPompe], components: [buttonsPompe] })
 
 
-            const embed = new EmbedBuilder()
-                .setTitle("Controle du paludarium")
-                .setColor("#a6d132")
+                    // chauffage
+                    const embedChauffage = new EmbedBuilder()
+                        .setTitle("Chauffage")
+                        .setColor("#a6d132")
+                    const buttonsChauffage = new ActionRowBuilder()
+                        .addComponents(
+                            new ButtonBuilder()
+                                .setCustomId("Chauffage_On")
+                                .setEmoji("🟢")
+                                .setStyle(ButtonStyle.Primary)
+                        )
+                        .addComponents(
+                            new ButtonBuilder()
+                                .setCustomId("Chauffage_Off")
+                                .setEmoji("🔴")
+                                .setStyle(ButtonStyle.Secondary)
+                        );
+                    (await client.channels.fetch(config.channels.autre)).send({ embeds: [embedChauffage], components: [buttonsChauffage] })
+                    break;
+                }
 
-            const controlMessage = await message.channel.send({ embeds: [embed], components: [buttonsPlot] })
+                case "ventil": {
+                    const embedVent = new EmbedBuilder()
+                        .setTitle("Ventilation")
+                        .setColor("#a6d132")
+                    const buttonsVent = new ActionRowBuilder()
+                        .addComponents(
+                            new ButtonBuilder()
+                                .setCustomId("Ventil")
+                                .setEmoji("🌬️")
+                                .setStyle(ButtonStyle.Secondary)
+                        );
+                    // proposer select menu avec des temps allant de 1m à 25m
+                    const ventilSelect = new ActionRowBuilder()
+                        .addComponents(
+                            new SelectMenuBuilder()
+                                .setCustomId("ventilSelect")
+                                .setPlaceholder("Choisissez un temps")
+                                .addOptions(
+                                    [
+                                        {
+                                            label: "5 minutes",
+                                            value: "5m",
+                                        },
+                                        {
+                                            label: "10 minutes",
+                                            value: "10m",
+                                        },
+                                        {
+                                            label: "15 minutes",
+                                            value: "15m",
+                                        },
+                                        {
+                                            label: "20 minutes",
+                                            value: "20m",
+                                        },
+                                        {
+                                            label: "25 minutes",
+                                            value: "25m",
+                                        },
+                                        {
+                                            label: "30 minutes",
+                                            value: "30m",
+                                        },
+                                        {
+                                            label: "35 minutes",
+                                            value: "35m",
+                                        },
+                                        {
+                                            label: "40 minutes",
+                                            value: "40m",
+                                        },
+                                        {
+                                            label: "45 minutes",
+                                            value: "45m",
+                                        },
+                                        {
+                                            label: "50 minutes",
+                                            value: "50m",
+                                        },
+                                        {
+                                            label: "55 minutes",
+                                            value: "55m",
+                                        },
+                                        {
+                                            label: "60 minutes",
+                                            value: "60m",
+                                        }
+                                    ]
+                                )
+                        );
 
-            // save messages id in config
-            config.humControleMessage = humMessage.id
-            config.tempControleMessage = tempMessage.id
-            config.controlPannel = controlMessage.id
+                    (await client.channels.fetch(config.channels.ventilation)).send({ embeds: [embedVent], components: [buttonsVent, ventilSelect] })
+
+                    break;
+                }
+
+                default: {
+                    break
+                }
+            }
 
             fs.writeFile("./config/config.json", JSON.stringify(config, null, 4), (err) => {
                 if (err) throw err;
                 console.log("The file has been saved!");
             });
-
-            // controle de la lumière
-            const embedLumiere = new EmbedBuilder()
-                .setTitle("Lumière")
-                .setColor("#a6d132")
-            const buttonsLumiere = new ActionRowBuilder()
-                .addComponents(
-                    new ButtonBuilder()
-                        .setCustomId("lightOn")
-                        .setEmoji("🔆")
-                        .setStyle(ButtonStyle.Success)
-                )
-                .addComponents(
-                    new ButtonBuilder()
-                        .setCustomId("MoonlightOn")
-                        .setEmoji("🌕")
-                        .setStyle(ButtonStyle.Primary)
-                )
-                .addComponents(
-                    new ButtonBuilder()
-                        .setCustomId("lightOff")
-                        .setEmoji("🌑")
-                        .setStyle(ButtonStyle.Secondary)
-                );
-            (await client.channels.fetch(config.channels.lumieres)).send({ embeds: [embedLumiere], components: [buttonsLumiere] })
-
-            // controle de la vaporisation
-            const embedVapo = new EmbedBuilder()
-                .setTitle("Vaporisation")
-                .setColor("#a6d132")
-            const buttonsVapo = new ActionRowBuilder()
-                .addComponents(
-                    new ButtonBuilder()
-                        .setCustomId("Vapo10s")
-                        .setEmoji("💧")
-                        .setStyle(ButtonStyle.Primary)
-                )
-                .addComponents(
-                    new ButtonBuilder()
-                        .setCustomId("Orage")
-                        .setEmoji("⛈️")
-                        .setStyle(ButtonStyle.Primary)
-                );
-            (await client.channels.fetch(config.channels.vaporisation)).send({ embeds: [embedVapo], components: [buttonsVapo] })
-
-
-            // controle de la ventilation
-            const embedVent = new EmbedBuilder()
-                .setTitle("Ventilation")
-                .setColor("#a6d132")
-            const buttonsVent = new ActionRowBuilder()
-                .addComponents(
-                    new ButtonBuilder()
-                        .setCustomId("Ventil")
-                        .setEmoji("🌬️")
-                        .setStyle(ButtonStyle.Secondary)
-                );
-            (await client.channels.fetch(config.channels.ventilation)).send({ embeds: [embedVent], components: [buttonsVent] })
-
-            // controle autres
-            // pompe
-            const embedPompe = new EmbedBuilder()
-                .setTitle("Pompe")
-                .setColor("#a6d132")
-            const buttonsPompe = new ActionRowBuilder()
-                .addComponents(
-                    new ButtonBuilder()
-                        .setCustomId("Pompe_On")
-                        .setEmoji("🟢")
-                        .setStyle(ButtonStyle.Primary)
-                )
-                .addComponents(
-                    new ButtonBuilder()
-                        .setCustomId("Pompe_Off")
-                        .setEmoji("🔴")
-                        .setStyle(ButtonStyle.Secondary)
-                );
-            (await client.channels.fetch(config.channels.autre)).send({ embeds: [embedPompe], components: [buttonsPompe] })
-
-
-            // chauffage
-            const embedChauffage = new EmbedBuilder()
-                .setTitle("Chauffage")
-                .setColor("#a6d132")
-            const buttonsChauffage = new ActionRowBuilder()
-                .addComponents(
-                    new ButtonBuilder()
-                        .setCustomId("Chauffage_On")
-                        .setEmoji("🟢")
-                        .setStyle(ButtonStyle.Primary)
-                )
-                .addComponents(
-                    new ButtonBuilder()
-                        .setCustomId("Chauffage_Off")
-                        .setEmoji("🔴")
-                        .setStyle(ButtonStyle.Secondary)
-                );
-            (await client.channels.fetch(config.channels.autre)).send({ embeds: [embedChauffage], components: [buttonsChauffage] })
-
             break
         }
     }
@@ -369,6 +440,17 @@ client.on("interactionCreate", async (interaction) => {
                     .setImage(oldLog.lastHumPLot);
                 interaction.reply({ embeds: [humEmbed], ephemeral: true })
                 break
+            }
+            case "ventilSelect": {
+                await interaction.deferUpdate();
+                const time = interaction.values[0].split("m")[0] * 60000
+                allumerEquipement(equipements.VentilationIn)
+                allumerEquipement(equipements.VentilationOut)
+                setTimeout(() => {
+                    eteindreEquipement(equipements.VentilationIn)
+                    eteindreEquipement(equipements.VentilationOut)
+                }, time);
+                break;
             }
             default: {
                 break;
