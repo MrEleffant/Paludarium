@@ -170,7 +170,44 @@ client.on("messageCreate", async (message) => {
                                 .setEmoji("⛈️")
                                 .setStyle(ButtonStyle.Primary)
                         );
-                    (await client.channels.fetch(config.channels.vaporisation)).send({ embeds: [embedVapo], components: [buttonsVapo] })
+
+                        const vapoSelect = new ActionRowBuilder()
+                        .addComponents(
+                            new SelectMenuBuilder()
+                                .setCustomId("vapoSelect")
+                                .setPlaceholder("Choisissez un temps")
+                                .addOptions(
+                                    [
+                                        {
+                                            label: "5s",
+                                            value: "5s",
+                                        },
+                                        {
+                                            label: "10s",
+                                            value: "10s",
+                                        },
+                                        {
+                                            label: "15s",
+                                            value: "15s",
+                                        },
+                                        {
+                                            label: "20s",
+                                            value: "20s",
+                                        },
+                                        {
+                                            label: "25s",
+                                            value: "25s",
+                                        },
+                                        {
+                                            label: "30s",
+                                            value: "30s",
+                                        },
+                                    ]
+                                )
+                        );
+
+                    (await client.channels.fetch(config.channels.vaporisation)).send({ embeds: [embedVapo], components: [buttonsVapo, vapoSelect] })
+                    break
                 }
 
                 case "autre": {
@@ -452,6 +489,16 @@ client.on("interactionCreate", async (interaction) => {
                 }, time);
                 break;
             }
+            case "vapoSelect": {
+                await interaction.deferUpdate();
+                const time = interaction.values[0].split("s")[0] * 1000
+                allumerEquipement(equipements.vaporisation)
+                setTimeout(() => {
+                    eteindreEquipement(equipements.vaporisation)
+                }, time);
+                break;
+            }
+
             default: {
                 break;
             }
