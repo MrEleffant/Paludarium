@@ -31,6 +31,12 @@
             "ratio": 3,
             "duree": 12
         },
+        "brum": {
+            "debut": 11,
+            "fin": 22,
+            "ratio": 3,
+            "duree": 5
+        },
         "ventil": {
             "duree": 120
         }

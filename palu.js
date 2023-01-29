@@ -71,8 +71,8 @@ client.on("ready", async () => {
     });
     nuit.start();
 
-    let vapo = new cron.CronJob(`00  ${config.heures.vapo.debut}-${config.heures.vapo.fin}/${config.heures.vapo.ratio} * * *`, vaporisations);
-    vapo.start();
+    let vapoBrum = new cron.CronJob(`00  ${config.heures.vapo.debut}-${config.heures.vapo.fin}/${config.heures.vapo.ratio} * * *`, manageVapo_Brumi);
+    vapoBrum.start();
 
     let plot = new cron.CronJob(`2/15 * * * *`, plotingTempHum)
     plot.start()
@@ -166,12 +166,18 @@ client.on("messageCreate", async (message) => {
                         )
                         .addComponents(
                             new ButtonBuilder()
+                                .setCustomId("brumisation")
+                                .setEmoji("🌫️")
+                                .setStyle(ButtonStyle.Primary)
+                        )
+                        .addComponents(
+                            new ButtonBuilder()
                                 .setCustomId("Orage")
                                 .setEmoji("⛈️")
                                 .setStyle(ButtonStyle.Primary)
                         );
 
-                        const vapoSelect = new ActionRowBuilder()
+                    const vapoSelect = new ActionRowBuilder()
                         .addComponents(
                             new SelectMenuBuilder()
                                 .setCustomId("vapoSelect")
@@ -364,6 +370,11 @@ client.on("interactionCreate", async (interaction) => {
                 vaporisations()
                 break
             }
+            case "brumisation": {
+                await interaction.deferUpdate();
+                brumisation()
+                break;
+            }
             case "MoonlightOn": {
                 await interaction.deferUpdate();
                 allumerEquipement(equipements.lumiereBleue)
@@ -506,11 +517,29 @@ client.on("interactionCreate", async (interaction) => {
     }
 })
 
+function manageVapo_Brumi() {
+    const now = new Date()
+    // check if hours is pair and do vapo if pair and brum if impair
+    if (now.getHours() % 2 === 0) {
+        vaporisations()
+    } else {
+        brumisation()
+    }
+}
+
+
 function vaporisations() {
     allumerEquipement(equipements.vaporisation)
     setTimeout(() => {
         eteindreEquipement(equipements.vaporisation)
     }, config.heures.vapo.duree * 1000);
+}
+
+function brumisation() {
+    allumerEquipement(equipements.brumisation)
+    setTimeout(() => {
+        eteindreEquipement(equipements.brumisation)
+    }, config.heures.brum.duree * 1000 * 60);
 }
 
 async function wait(ms) {

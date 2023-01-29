@@ -19,6 +19,11 @@
         "prise": 25,
         "inter": 4
     },
+    "brumisation": {
+        "name": "Brumisation",
+        "prise": 26,
+        "inter": 1
+    },
     "pompe": {
         "name": "Pompe",
         "prise": 26,
