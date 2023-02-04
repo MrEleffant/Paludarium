@@ -74,6 +74,9 @@ client.on("ready", async () => {
     let vapoBrum = new cron.CronJob(`00  ${config.heures.vapo.debut}-${config.heures.vapo.fin}/${config.heures.vapo.ratio} * * *`, manageVapo_Brumi);
     vapoBrum.start();
 
+    let ventil = new cron.CronJob(`40 ${config.heures.vapo.debut-1} * * *`, renewAir) // renouvellmeent de l'air du bac
+    ventil.start()
+
     let plot = new cron.CronJob(`2/15 * * * *`, plotingTempHum)
     plot.start()
     plotingTempHum()
@@ -546,6 +549,16 @@ async function wait(ms) {
     return new Promise(resolve => {
         setTimeout(resolve, ms);
     });
+}
+
+async function renewAir() {
+    log("Renouvellement d'air")
+    allumerEquipement(equipements.VentilationIn)
+    allumerEquipement(equipements.VentilationOut)
+    setTimeout(() => {
+        eteindreEquipement(equipements.VentilationIn)
+        eteindreEquipement(equipements.VentilationOut)
+    }, config.heures.ventil.duree * 1000 * 60);
 }
 
 async function plotingTempHum() {
