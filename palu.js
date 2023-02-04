@@ -74,7 +74,7 @@ client.on("ready", async () => {
     let vapoBrum = new cron.CronJob(`00  ${config.heures.vapo.debut}-${config.heures.vapo.fin}/${config.heures.vapo.ratio} * * *`, manageVapo_Brumi);
     vapoBrum.start();
 
-    let ventil = new cron.CronJob(`40 ${config.heures.vapo.debut-1} * * *`, renewAir) // renouvellmeent de l'air du bac
+    let ventil = new cron.CronJob(`40 ${config.heures.vapo.debut} * * *`, renewAir) // renouvellmeent de l'air du bac
     ventil.start()
 
     let plot = new cron.CronJob(`2/15 * * * *`, plotingTempHum)
@@ -552,18 +552,17 @@ async function wait(ms) {
 }
 
 async function renewAir() {
-    log("Renouvellement d'air")
+    log("Renouvellement de l'air")
     allumerEquipement(equipements.VentilationIn)
     allumerEquipement(equipements.VentilationOut)
     setTimeout(() => {
         eteindreEquipement(equipements.VentilationIn)
         eteindreEquipement(equipements.VentilationOut)
-    }, config.heures.ventil.duree * 1000 * 60);
+    }, config.heures.ventil.purge * 1000 * 60);
 }
 
 async function plotingTempHum() {
     log("Actualisation des graphiques")
-
     console.log("plotingTempHum")
     async function plot(data, color, data2, color2, labels) {
         const { ChartJSNodeCanvas } = require("chartjs-node-canvas");

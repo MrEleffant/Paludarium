@@ -39,7 +39,7 @@
         },
         "ventil": {
             "duree": 120,
-            "purge": 5
+            "purge": 10
         }
     }
 }
