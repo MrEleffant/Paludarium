@@ -74,7 +74,7 @@ client.on("ready", async () => {
     let vapoBrum = new cron.CronJob(`00  ${config.heures.vapo.debut}-${config.heures.vapo.fin}/${config.heures.vapo.ratio} * * *`, manageVapo_Brumi);
     vapoBrum.start();
 
-    let ventil = new cron.CronJob(`40 ${config.heures.vapo.debut} * * *`, renewAir) // renouvellmeent de l'air du bac
+    let ventil = new cron.CronJob(`40 ${config.heures.vapo.debut-1} * * *`, renewAir) // renouvellmeent de l'air du bac
     ventil.start()
 
     let plot = new cron.CronJob(`2/15 * * * *`, plotingTempHum)
