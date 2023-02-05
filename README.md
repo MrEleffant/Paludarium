@@ -18,7 +18,7 @@ L'interfaçage via discord a pour but de faciliter le développement, mais ceci 
 - Buses: [Aliexpress](https://fr.aliexpress.com/item/1005003416627646.html?spm=a2g0o.order_list.order_list_main.12.d7265e5b0qKbiF&gatewayAdapt=glo2fra)
 - Tuyau: [Aliexpress](https://fr.aliexpress.com/item/4001054330063.html?spm=a2g0o.order_list.order_list_main.18.d7265e5b0qKbiF&gatewayAdapt=glo2fra)
 - Pompe:
-- Chauffage:  
+- Chauffage:  [AquaEl Ultra Heater 25W](https://www.amazon.fr/dp/B07FXRK2BF?psc=1&ref=ppx_yo2ov_dt_b_product_details)
 - Multiprise: [Tasmota](https://templates.blakadder.com/nous_A5T.html)
 
 ### Supports
@@ -37,16 +37,25 @@ L'interfaçage via discord a pour but de faciliter le développement, mais ceci 
 ![controleLum](https://media.discordapp.net/attachments/1046446625146540063/1071829922017980446/image.png)
 | Bouton | Fonction     |
 | :-------- | :------- |
-|  | Afficher d'anciennes courbes |
 | ☀️ | Allumer les lumières blanches |
 | 🌕 | Eteindre la lumière et allumer la lumière Bleue |
 | 🌑 | Eteindre toutes les lumières|
 
 ## Humidité
 ![controleHum](https://media.discordapp.net/attachments/1046446625146540063/1071830118042976347/image.png)
+| Bouton | Fonction     |
+| :-------- | :------- |
+| 💧 | Vaporiser |
+| 🌫️ | Brumiser |
+| 🌩️ | Lancer un orage |  
+| `Choisissez un temps` | Vaporiser durant le temps choisi |
+
 ## Ventilation
 ![controleVentil](https://media.discordapp.net/attachments/1046446625146540063/1071830327573627040/image.png)
-
+| Bouton | Fonction     |
+| :-------- | :------- |
+| 🌬️ | Ventiler |  
+| `Choisissez un temps` | Ventiler durant le temps choisi |
 
 # Plantes
 
