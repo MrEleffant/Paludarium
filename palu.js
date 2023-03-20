@@ -71,11 +71,20 @@ client.on("ready", async () => {
     });
     nuit.start();
 
-    let vapoBrum = new cron.CronJob(`00  ${config.heures.vapo.debut}-${config.heures.vapo.fin}/${config.heures.vapo.ratio} * * *`, manageVapo_Brumi);
-    vapoBrum.start();
+    // séparation de la gestion de la brumisation et de la vapo
+    // gestion de la vaporisation
+    const vapoHeures = config.heures.vapo.heures.toString()
+    const vapoString = `00 ${vapoHeures} * * *`
 
-    let ventil = new cron.CronJob(`40 ${config.heures.vapo.debut-1} * * *`, renewAir) // renouvellmeent de l'air du bac
-    ventil.start()
+    let vapo = new cron.CronJob(vapoString, manageVapo);
+    vapo.start();
+
+    // gestion de la brumisation
+    const brumiHeures = config.heures.brum.heures.toString()
+    const brumiString = `00 ${brumiHeures} * * *`
+
+    let brumi = new cron.CronJob(brumiString, manageBrumi);
+    brumi.start();
 
     let plot = new cron.CronJob(`2/15 * * * *`, plotingTempHum)
     plot.start()
@@ -520,14 +529,13 @@ client.on("interactionCreate", async (interaction) => {
     }
 })
 
-function manageVapo_Brumi() {
-    const now = new Date()
-    // check if hours is pair and do vapo if pair and brum if impair
-    if (now.getHours() % 2 === 0) {
-        vaporisations()
-    } else {
-        brumisation()
-    }
+async function manageVapo() {
+    await renewAir();
+    vaporisations()
+}
+
+async function manageBrumi() {
+    brumisation()
 }
 
 
@@ -555,7 +563,7 @@ async function renewAir() {
     log("Renouvellement de l'air")
     allumerEquipement(equipements.VentilationIn)
     allumerEquipement(equipements.VentilationOut)
-    setTimeout(() => {
+    await setTimeout(() => {
         eteindreEquipement(equipements.VentilationIn)
         eteindreEquipement(equipements.VentilationOut)
     }, config.heures.ventil.purge * 1000 * 60);

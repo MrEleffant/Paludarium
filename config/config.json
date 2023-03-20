@@ -26,16 +26,12 @@
             "fin": 0
         },
         "vapo": {
-            "debut": 11,
-            "fin": 22,
-            "ratio": 3,
-            "duree": 12
+            "heures": [12, 20],
+            "duree": 20
         },
         "brum": {
-            "debut": 11,
-            "fin": 22,
-            "ratio": 3,
-            "duree": 5
+            "heures": [10, 14, 18],
+            "duree": 10
         },
         "ventil": {
             "duree": 120,
