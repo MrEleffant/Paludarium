@@ -26,7 +26,7 @@
             "fin": 0
         },
         "vapo": {
-            "heures": [12, 20],
+            "heures": [12],
             "duree": 20
         },
         "brum": {
@@ -34,6 +34,7 @@
             "duree": 10
         },
         "ventil": {
+            "heures": [9, 13, 17],
             "duree": 120,
             "purge": 10
         }

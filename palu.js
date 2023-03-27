@@ -86,6 +86,9 @@ client.on("ready", async () => {
     let brumi = new cron.CronJob(brumiString, manageBrumi);
     brumi.start();
 
+    let ventil = new cron.CronJob(`00 ${config.heures.ventil.heures.toString()} * * *`, renewAir);
+    ventil.start();
+
     let plot = new cron.CronJob(`2/15 * * * *`, plotingTempHum)
     plot.start()
     plotingTempHum()
@@ -530,7 +533,6 @@ client.on("interactionCreate", async (interaction) => {
 })
 
 async function manageVapo() {
-    await renewAir();
     vaporisations()
 }
 
