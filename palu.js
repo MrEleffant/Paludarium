@@ -721,7 +721,7 @@ async function plotingTempHum() {
     const todayFiles = files.filter(file => fs.readFileSync(`../zigbee2mqtt/data/log/${file}/log.txt`, 'utf8').includes(todayS))
     todayFiles.forEach(tfile => {
         fs.readFileSync(`../zigbee2mqtt/data/log/${tfile}/log.txt`, 'utf8').split(/\r?\n/).forEach(line => {
-            if (line.includes('payload') && line.includes(todayS)) {
+            if (line.includes('payload') && line.includes(todayS) && line.includes("{")) {
                 // getting and logging datas
                 try {
                     let data = line.split('payload')[1]
@@ -752,6 +752,7 @@ async function plotingTempHum() {
                         })
                     }
                 } catch (error) {
+                    console.log(line)
                     console.log(error)
                 }
             }
