@@ -4,6 +4,8 @@ const cron = require('cron');
 const fs = require("fs");
 const { Client, GatewayIntentBits, Partials, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, Events, SelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, AttachmentBuilder } = require('discord.js');
 
+const { exec } = require('child_process');
+
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -86,10 +88,10 @@ client.on("ready", async () => {
     let brumi = new cron.CronJob(brumiString, manageBrumi);
     brumi.start();
 
-    let ventil = new cron.CronJob(`00 ${config.heures.ventil.heures.toString()} * * *`, renewAir);
+    let ventil = new cron.CronJob(`30 ${config.heures.ventil.debut}-${config.heures.ventil.fin} * * *`, renewAir);
     ventil.start();
 
-    let plot = new cron.CronJob(`2/15 * * * *`, plotingTempHum)
+    let plot = new cron.CronJob(`2/10 * * * *`, plotingTempHum)
     plot.start()
     plotingTempHum()
 
@@ -444,7 +446,7 @@ client.on("interactionCreate", async (interaction) => {
                 setTimeout(() => {
                     eteindreEquipement(equipements.VentilationIn)
                     eteindreEquipement(equipements.VentilationOut)
-                }, config.heures.ventil.duree * 1000);
+                }, config.heures.ventil.duree * 1000 * 60);
 
                 break;
             }
@@ -568,10 +570,31 @@ async function renewAir() {
     await setTimeout(() => {
         eteindreEquipement(equipements.VentilationIn)
         eteindreEquipement(equipements.VentilationOut)
-    }, config.heures.ventil.purge * 1000 * 60);
+    }, config.heures.ventil.duree * 1000 * 60);
 }
 
 async function plotingTempHum() {
+    let url
+    try {
+        log("Prise de la photo")
+        await exec('fswebcam --no-banner --resolution 1920*1080 --jpeg 100 image.jpg', (error, stdout, stderr) => {
+            if (error) {
+                console.log(`error: ${error.message}`);
+                return;
+            }
+            if (stderr) {
+                console.log(`stderr: ${stderr}`);
+                return;
+            }
+            console.log(`stdout: ${stdout}`);
+        });
+        const mess = await logChannel.send({ files: ['image.jpg'] })
+        url = mess.attachments.first().url
+    } catch (error) {
+        console.log(error)
+    }
+    console.log(url)
+
     log("Actualisation des graphiques")
     console.log("plotingTempHum")
     async function plot(data, color, data2, color2, labels) {
@@ -939,6 +962,7 @@ async function plotingTempHum() {
             { name: "Point Chaud", value: `${hotPoint?.temperature || "-"} °C\n${hotPoint?.humidity || "-"} %`, inline: true },
             { name: "Point Froid", value: `${coldPoint?.temperature || "-"} °C\n${coldPoint?.humidity || "-"} %`, inline: true },
         )
+        .setImage(url)
         .setTimestamp();
     const controlePannel = await controleChannel.messages.fetch(config.controlPannel)
     controlePannel.edit({ embeds: [embed] })
