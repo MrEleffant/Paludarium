@@ -8,6 +8,7 @@
         "autre": "1066818197749256262"
     },
     "logChannel": "1065372169137291396",
+    "PhotoChannel": "1092833982212751450",
     "plotChannel": "1046446625146540063",
     "controleChannel": "1030201462195765368",
     "controlPannel": "1066824680826228767",
@@ -41,7 +42,7 @@
         "ventil": {
             "debut": 9,
             "fin": 21,
-            "duree": 10
+            "duree": 15
         }
     }
 }

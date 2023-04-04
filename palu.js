@@ -2,7 +2,7 @@ require('dotenv').config()
 var request = require('request');
 const cron = require('cron');
 const fs = require("fs");
-const { Client, GatewayIntentBits, Partials, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, Events, SelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, AttachmentBuilder } = require('discord.js');
+const { Client, GatewayIntentBits, Partials, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, Events, StringSelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, AttachmentBuilder } = require('discord.js');
 
 const { exec } = require('child_process');
 
@@ -15,7 +15,7 @@ const client = new Client({
     ], partials: [Partials.Channel]
 });
 
-let guild, logChannel
+let guild, logChannel, logPhoto
 const config = require("./config/config.json");
 const equipements = require("./config/equipements.json");
 
@@ -24,6 +24,7 @@ client.login(process.env.TOKEN);
 client.on("ready", async () => {
     guild = await client.guilds.fetch(config.guild)
     logChannel = await guild.channels.fetch(config.logChannel)
+    logPhoto = await guild.channels.fetch(config.PhotoChannel)
 
     console.log(`${client.user.tag} is ready!`)
     log("Bot démarré")
@@ -196,7 +197,7 @@ client.on("messageCreate", async (message) => {
 
                     const vapoSelect = new ActionRowBuilder()
                         .addComponents(
-                            new SelectMenuBuilder()
+                            new StringSelectMenuBuilder()
                                 .setCustomId("vapoSelect")
                                 .setPlaceholder("Choisissez un temps")
                                 .addOptions(
@@ -288,7 +289,7 @@ client.on("messageCreate", async (message) => {
                     // proposer select menu avec des temps allant de 1m à 25m
                     const ventilSelect = new ActionRowBuilder()
                         .addComponents(
-                            new SelectMenuBuilder()
+                            new StringSelectMenuBuilder()
                                 .setCustomId("ventilSelect")
                                 .setPlaceholder("Choisissez un temps")
                                 .addOptions(
@@ -441,12 +442,7 @@ client.on("interactionCreate", async (interaction) => {
 
             case "Ventil": {
                 await interaction.deferUpdate();
-                allumerEquipement(equipements.VentilationIn)
-                allumerEquipement(equipements.VentilationOut)
-                setTimeout(() => {
-                    eteindreEquipement(equipements.VentilationIn)
-                    eteindreEquipement(equipements.VentilationOut)
-                }, config.heures.ventil.duree * 1000 * 60);
+                renewAir()
 
                 break;
             }
@@ -567,6 +563,7 @@ async function renewAir() {
     log("Renouvellement de l'air")
     allumerEquipement(equipements.VentilationIn)
     allumerEquipement(equipements.VentilationOut)
+    console.log(config.heures.ventil.duree * 1000 * 60)
     await setTimeout(() => {
         eteindreEquipement(equipements.VentilationIn)
         eteindreEquipement(equipements.VentilationOut)
@@ -577,7 +574,13 @@ async function plotingTempHum() {
     let url
     try {
         log("Prise de la photo")
-        await exec('fswebcam --no-banner --resolution 1920*1080 --jpeg 100 image.jpg', (error, stdout, stderr) => {
+        // date string file name 
+        const date = new Date()
+        const dateString = date.toISOString().split("T")[0] + "_" + date.toTimeString().split(" ")[0].split(":").join("-")
+        // const filePath = './images/testImage.jpg'
+        const filePath = './images/'+date.toISOString().split("T")[0] + "_" + date.toTimeString().split(" ")[0].split(":").join("-")+'.jpg'
+
+        await exec('fswebcam --no-banner --resolution 1920*1080 --jpeg 100 ' + filePath, (error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);
                 return;
@@ -588,13 +591,20 @@ async function plotingTempHum() {
             }
             console.log(`stdout: ${stdout}`);
         });
-        const mess = await logChannel.send({ files: ['image.jpg'] })
-        url = mess.attachments.first().url
+        await wait(5000)
+        logPhoto.send({ files: [filePath] }).then(mess => {
+            url = mess.attachments.first().url
+        })
     } catch (error) {
         console.log(error)
     }
-    console.log(url)
 
+    while(url == undefined){
+        console.log("waiting for url")
+        await wait(1000)
+    }    
+    
+    await wait(1000)
     log("Actualisation des graphiques")
     console.log("plotingTempHum")
     async function plot(data, color, data2, color2, labels) {
@@ -843,7 +853,7 @@ async function plotingTempHum() {
     })
 
 
-
+    // devices 
     const hotDevice = "0x00158d00033f09fa"
     const coldDevice = "0x00158d0008cf23c5"
     const controleChannel = await client.channels.fetch(config.controleChannel)
@@ -898,14 +908,14 @@ async function plotingTempHum() {
 
     const humPlot = new ActionRowBuilder()
         .addComponents(
-            new SelectMenuBuilder()
+            new StringSelectMenuBuilder()
                 .setCustomId("humPlot")
                 .setPlaceholder("Autres logs")
                 .addOptions(logList)
         );
     const tempPlot = new ActionRowBuilder()
         .addComponents(
-            new SelectMenuBuilder()
+            new StringSelectMenuBuilder()
                 .setCustomId("tempPlot")
                 .setPlaceholder("Autres logs")
                 .addOptions(logList)
@@ -954,7 +964,7 @@ async function plotingTempHum() {
 
     const hotPoint = lastData[hotDevice]
     const coldPoint = lastData[coldDevice]
-
+    console.log("Updating controle pannel")
     const embed = new EmbedBuilder()
         .setTitle("Controle du paludarium")
         .setColor("#a6d132")
