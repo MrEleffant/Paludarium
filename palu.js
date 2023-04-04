@@ -4,7 +4,10 @@ const cron = require('cron');
 const fs = require("fs");
 const { Client, GatewayIntentBits, Partials, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, Events, StringSelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, AttachmentBuilder } = require('discord.js');
 
-const { exec } = require('child_process');
+// gif and image manipulation
+const { spawn, spawnSync } = require('child_process');
+const imagemin = require('imagemin');
+const imageminGifsicle = require('imagemin-gifsicle');
 
 const client = new Client({
     intents: [
@@ -15,7 +18,7 @@ const client = new Client({
     ], partials: [Partials.Channel]
 });
 
-let guild, logChannel, logPhoto
+let guild, logChannel, logPhoto, logGIF
 const config = require("./config/config.json");
 const equipements = require("./config/equipements.json");
 
@@ -25,6 +28,7 @@ client.on("ready", async () => {
     guild = await client.guilds.fetch(config.guild)
     logChannel = await guild.channels.fetch(config.logChannel)
     logPhoto = await guild.channels.fetch(config.PhotoChannel)
+    logGIF = await guild.channels.fetch(config.GIFChannel)
 
     console.log(`${client.user.tag} is ready!`)
     log("Bot démarré")
@@ -92,7 +96,7 @@ client.on("ready", async () => {
     let ventil = new cron.CronJob(`30 ${config.heures.ventil.debut}-${config.heures.ventil.fin} * * *`, renewAir);
     ventil.start();
 
-    let plot = new cron.CronJob(`2/10 * * * *`, plotingTempHum)
+    let plot = new cron.CronJob(`2/15 1-23 * * *`, plotingTempHum)
     plot.start()
     plotingTempHum()
 
@@ -190,6 +194,18 @@ client.on("messageCreate", async (message) => {
                         )
                         .addComponents(
                             new ButtonBuilder()
+                                .setCustomId("brumisationOn")
+                                .setEmoji("🟢")
+                                .setStyle(ButtonStyle.Success)
+                        )
+                        .addComponents(
+                            new ButtonBuilder()
+                                .setCustomId("brumisationOff")
+                                .setEmoji("🔴")
+                                .setStyle(ButtonStyle.Danger)
+                        )
+                        .addComponents(
+                            new ButtonBuilder()
                                 .setCustomId("Orage")
                                 .setEmoji("⛈️")
                                 .setStyle(ButtonStyle.Primary)
@@ -243,13 +259,13 @@ client.on("messageCreate", async (message) => {
                             new ButtonBuilder()
                                 .setCustomId("Pompe_On")
                                 .setEmoji("🟢")
-                                .setStyle(ButtonStyle.Primary)
+                                .setStyle(ButtonStyle.Success)
                         )
                         .addComponents(
                             new ButtonBuilder()
                                 .setCustomId("Pompe_Off")
                                 .setEmoji("🔴")
-                                .setStyle(ButtonStyle.Secondary)
+                                .setStyle(ButtonStyle.Danger)
                         );
                     (await client.channels.fetch(config.channels.autre)).send({ embeds: [embedPompe], components: [buttonsPompe] })
 
@@ -263,13 +279,13 @@ client.on("messageCreate", async (message) => {
                             new ButtonBuilder()
                                 .setCustomId("Chauffage_On")
                                 .setEmoji("🟢")
-                                .setStyle(ButtonStyle.Primary)
+                                .setStyle(ButtonStyle.Success)
                         )
                         .addComponents(
                             new ButtonBuilder()
                                 .setCustomId("Chauffage_Off")
                                 .setEmoji("🔴")
-                                .setStyle(ButtonStyle.Secondary)
+                                .setStyle(ButtonStyle.Danger)
                         );
                     (await client.channels.fetch(config.channels.autre)).send({ embeds: [embedChauffage], components: [buttonsChauffage] })
                     break;
@@ -285,7 +301,20 @@ client.on("messageCreate", async (message) => {
                                 .setCustomId("Ventil")
                                 .setEmoji("🌬️")
                                 .setStyle(ButtonStyle.Secondary)
+                        )
+                        .addComponents(
+                            new ButtonBuilder()
+                                .setCustomId("VentilOn")
+                                .setEmoji("🟢")
+                                .setStyle(ButtonStyle.Success)
+                        )
+                        .addComponents(
+                            new ButtonBuilder()
+                                .setCustomId("VentilOff")
+                                .setEmoji("🔴")
+                                .setStyle(ButtonStyle.Danger)
                         );
+
                     // proposer select menu avec des temps allant de 1m à 25m
                     const ventilSelect = new ActionRowBuilder()
                         .addComponents(
@@ -393,6 +422,16 @@ client.on("interactionCreate", async (interaction) => {
                 brumisation()
                 break;
             }
+            case "brumisationOn": {
+                await interaction.deferUpdate();
+                allumerEquipement(equipements.brumisation)
+                break
+            }
+            case "brumisationOff": {
+                await interaction.deferUpdate();
+                eteindreEquipement(equipements.brumisation)
+                break
+            }
             case "MoonlightOn": {
                 await interaction.deferUpdate();
                 allumerEquipement(equipements.lumiereBleue)
@@ -446,6 +485,18 @@ client.on("interactionCreate", async (interaction) => {
 
                 break;
             }
+            case "VentilOn": {
+                await interaction.deferUpdate();
+                allumerEquipement(equipements.VentilationIn)
+                allumerEquipement(equipements.VentilationOut)
+                break;
+            }
+            case "VentilOff": {
+                await interaction.deferUpdate();
+                eteindreEquipement(equipements.VentilationIn)
+                eteindreEquipement(equipements.VentilationOut)
+                break;
+            }
             case "refreshPlot": {
                 await interaction.deferUpdate();
                 plotingTempHum()
@@ -477,7 +528,7 @@ client.on("interactionCreate", async (interaction) => {
             }
         }
 
-    } else if (interaction.isSelectMenu()) {
+    } else if (interaction.isStringSelectMenu()) {
         console.log(interactionId)
         switch (interaction.customId) {
             case "tempPlot": {
@@ -563,7 +614,6 @@ async function renewAir() {
     log("Renouvellement de l'air")
     allumerEquipement(equipements.VentilationIn)
     allumerEquipement(equipements.VentilationOut)
-    console.log(config.heures.ventil.duree * 1000 * 60)
     await setTimeout(() => {
         eteindreEquipement(equipements.VentilationIn)
         eteindreEquipement(equipements.VentilationOut)
@@ -571,39 +621,122 @@ async function renewAir() {
 }
 
 async function plotingTempHum() {
-    let url
+    let url, GIFurl
     try {
         log("Prise de la photo")
+        console.log("Prise de la photo")
         // date string file name 
         const date = new Date()
         const dateString = date.toISOString().split("T")[0] + "_" + date.toTimeString().split(" ")[0].split(":").join("-")
-        // const filePath = './images/testImage.jpg'
-        const filePath = './images/'+date.toISOString().split("T")[0] + "_" + date.toTimeString().split(" ")[0].split(":").join("-")+'.jpg'
+        // const filePathJPG = './images/testImage.jpg'
+        const filePathJPG = './images/screen.jpg'
+        const filePathPNG = './images/' + dateString + '.png'
 
-        await exec('fswebcam --no-banner --resolution 1920*1080 --jpeg 100 ' + filePath, (error, stdout, stderr) => {
-            if (error) {
-                console.log(`error: ${error.message}`);
-                return;
-            }
-            if (stderr) {
-                console.log(`stderr: ${stderr}`);
-                return;
-            }
-            console.log(`stdout: ${stdout}`);
-        });
-        await wait(5000)
-        logPhoto.send({ files: [filePath] }).then(mess => {
-            url = mess.attachments.first().url
-        })
+        // for pic
+        spawnSync('fswebcam', [
+            '--no-banner',
+            '--resolution', '1920x1080',
+            '--jpeg', '100',
+            '--save', filePathJPG,
+        ]);
+
+        // for gif
+        spawnSync('fswebcam', [
+            '--no-banner',
+            '--resolution', '1920x1080',
+            '--png', '9',
+            '--save', filePathPNG,
+        ]);
+
+        await setTimeout(() => {
+            logPhoto.send({ files: [filePathJPG] }).then(mess => {
+                url = mess.attachments.first().url
+                console.log({ url })
+            })
+        }, 5000);
+
     } catch (error) {
         console.log(error)
     }
 
-    while(url == undefined){
-        console.log("waiting for url")
+    let i = 0
+    while (url == undefined) {
+        console.log("waiting for image url " + i)
         await wait(1000)
-    }    
+        // make sure you can't wait forever
+        if (++i > 30) {
+            console.log("URL error")
+            url = "https://cdn.discordapp.com/attachments/1092833982212751450/1092853719407800320/sign-red-error-icon-1.png"
+        }
+    }
+
+
+    // generation du gif
+    try {
+
+        const imagemin = (await import('imagemin')).default;
     
+        log("Génération du GIF")
+        console.log("Génération du GIF")
+        const date = new Date()
+        const files = fs.readdirSync('./images').filter(file => {
+            const fileDate = new Date(file.split('_')[0]);
+            return fileDate.toDateString() === date.toDateString() &&
+                file.toLowerCase().endsWith('.png');
+        });
+        const gifPath = `./gif/${date.toISOString().split('T')[0]}.gif`
+        const gifPath2 = `./gif/${date.toISOString().split('T')[0]}_compressed.gif`
+        const args = [
+            '--fps', '10', // Set the frame rate of the GIF to 10 FPS
+            '-o', gifPath, // Set the output file path
+            ...files.map(file => `./images/${file}`), // Add all the image files to the command
+        ];
+        const child = spawn('gifski', args);
+
+        child.on('error', error => {
+            console.error(`Error: ${error.message}`);
+        });
+
+        child.on('close', async code => {
+            console.log(`GIF created with exit code ${code}`);
+
+            // Optimize the GIF file to reduce its size
+            const optimizedBuffer = await imagemin.buffer(fs.readFileSync(gifPath), {
+                plugins: [
+                  imageminGifsicle({
+                    optimizationLevel: 3,
+                    colors: 256,
+                    interlaced: true,
+                    // Reduce the size of the GIF file to less than 8MB
+                    maxFileSize: 8000,
+                  }),
+                ],
+              });
+
+            // Write the optimized GIF file back to disk
+            fs.writeFileSync(gifPath2, optimizedBuffer);
+
+            logGIF.send({ files: [gifPath2] }).then(mess => {
+                GIFurl = mess.attachments.first().url
+                console.log({ GIFurl })
+            })
+        });
+    } catch (error) {
+        console.log(error)
+    }
+
+    i = 0
+    while (GIFurl == undefined) {
+        console.log("waiting for GIF url " + i)
+        await wait(1000)
+        // make sure you can't wait forever
+        if (++i > 120) {
+            console.log("GIF error")
+            GIFurl = "https://cdn.discordapp.com/attachments/1092833982212751450/1092853719407800320/sign-red-error-icon-1.png"
+        }
+    }
+
+
     await wait(1000)
     log("Actualisation des graphiques")
     console.log("plotingTempHum")
@@ -973,6 +1106,7 @@ async function plotingTempHum() {
             { name: "Point Froid", value: `${coldPoint?.temperature || "-"} °C\n${coldPoint?.humidity || "-"} %`, inline: true },
         )
         .setImage(url)
+        .setThumbnail(GIFurl)
         .setTimestamp();
     const controlePannel = await controleChannel.messages.fetch(config.controlPannel)
     controlePannel.edit({ embeds: [embed] })
