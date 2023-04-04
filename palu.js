@@ -6,7 +6,6 @@ const { Client, GatewayIntentBits, Partials, EmbedBuilder, ActionRowBuilder, But
 
 // gif and image manipulation
 const { spawn, spawnSync } = require('child_process');
-const imagemin = require('imagemin');
 const imageminGifsicle = require('imagemin-gifsicle');
 
 const client = new Client({
@@ -699,6 +698,8 @@ async function plotingTempHum() {
 
         child.on('close', async code => {
             console.log(`GIF created with exit code ${code}`);
+            // if file exist 
+            if (!fs.existsSync(gifPath)) return
 
             // Optimize the GIF file to reduce its size
             const optimizedBuffer = await imagemin.buffer(fs.readFileSync(gifPath), {
@@ -730,7 +731,7 @@ async function plotingTempHum() {
         console.log("waiting for GIF url " + i)
         await wait(1000)
         // make sure you can't wait forever
-        if (++i > 120) {
+        if (++i > 120 || !fs.existsSync(`./gif/${new Date().toISOString().split('T')[0]}.gif`)) {
             console.log("GIF error")
             GIFurl = "https://cdn.discordapp.com/attachments/1092833982212751450/1092853719407800320/sign-red-error-icon-1.png"
         }
