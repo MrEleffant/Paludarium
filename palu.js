@@ -95,7 +95,7 @@ client.on("ready", async () => {
     let ventil = new cron.CronJob(`30 ${config.heures.ventil.debut}-${config.heures.ventil.fin} * * *`, renewAir);
     ventil.start();
 
-    let plot = new cron.CronJob(`2/15 1-23 * * *`, plotingTempHum)
+    let plot = new cron.CronJob(`2/15 9-23 * * *`, plotingTempHum)
     plot.start()
     plotingTempHum()
 
@@ -686,7 +686,7 @@ async function plotingTempHum() {
         const gifPath = `./gif/${date.toISOString().split('T')[0]}.gif`
         const gifPath2 = `./gif/${date.toISOString().split('T')[0]}_compressed.gif`
         const args = [
-            '--fps', '10', // Set the frame rate of the GIF to 10 FPS
+            '--fps', '6', // Set the frame rate of the GIF
             '-o', gifPath, // Set the output file path
             ...files.map(file => `./images/${file}`), // Add all the image files to the command
         ];

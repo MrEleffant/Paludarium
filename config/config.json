@@ -29,16 +29,17 @@
         },
         "vapo": {
             "heures": [
-                13
+                10,
+                17
             ],
-            "duree": 20
+            "duree": 19
         },
         "brum": {
             "heures": [
-                10,
-                18
+                13,
+                20
             ],
-            "duree": 10
+            "duree": 11
         },
         "ventil": {
             "debut": 9,
