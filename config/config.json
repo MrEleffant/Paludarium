@@ -20,7 +20,7 @@
     "prefix": "?",
     "heures": {
         "jour": {
-            "debut": 10,
+            "debut": 9,
             "fin": 22
         },
         "crepuscule": {
@@ -39,12 +39,12 @@
                 13,
                 20
             ],
-            "duree": 11
+            "duree": 15
         },
         "ventil": {
             "debut": 9,
             "fin": 21,
-            "duree": 15
+            "duree": 20
         }
     }
 }
