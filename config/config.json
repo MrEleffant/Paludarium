@@ -30,14 +30,15 @@
         "vapo": {
             "heures": [
                 10,
-                17
+                17,
+                20
             ],
-            "duree": 19
+            "duree": 25
         },
         "brum": {
             "heures": [
                 13,
-                20
+                15
             ],
             "duree": 15
         },
