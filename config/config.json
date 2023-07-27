@@ -20,7 +20,7 @@
     "prefix": "?",
     "heures": {
         "jour": {
-            "debut": 9,
+            "debut": 10,
             "fin": 22
         },
         "crepuscule": {
@@ -33,7 +33,7 @@
                 17,
                 20
             ],
-            "duree": 25
+            "duree": 20
         },
         "brum": {
             "heures": [
@@ -45,7 +45,7 @@
         "ventil": {
             "debut": 9,
             "fin": 21,
-            "duree": 20
+            "duree": 17
         }
     }
 }
