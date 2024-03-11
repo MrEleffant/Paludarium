@@ -1,16 +1,12 @@
 {
     "guild": "997149313299910696",
     "channels": {
-        "plots": "1030201462195765368",
-        "lumieres": "1066817900578615348",
-        "vaporisation": "1066818042652283012",
-        "ventilation": "1066819317552910407",
+        "lumieres": "1066818197749256262",
+        "vaporisation": "1066818197749256262",
+        "ventilation": "1066818197749256262",
         "autre": "1066818197749256262"
     },
     "logChannel": "1065372169137291396",
-    "PhotoChannel": "1092833982212751450",
-    "GIFChannel": "1092840600384053248",
-    "plotChannel": "1046446625146540063",
     "controleChannel": "1030201462195765368",
     "controlPannel": "1066824680826228767",
     "humControleMessage": "1066824678708097155",
@@ -18,34 +14,54 @@
     "ip": "192.168.1.25",
     "ipLocal": "192.168.1",
     "prefix": "?",
-    "heures": {
-        "jour": {
+    "configuration": {
+        "eclairage_jour": {
             "debut": 10,
             "fin": 22
         },
-        "crepuscule": {
+        "eclairage_crepuscule": {
             "debut": 22,
             "fin": 0
         },
-        "vapo": {
-            "heures": [
-                10,
-                17,
-                20
-            ],
-            "duree": 20
+        "vaporisation": [
+            {
+                "heure": 10,
+                "minute": 0,
+                "duree": 10
+            },
+            {
+                "heure": 17,
+                "minute": 0,
+                "duree": 10
+            },
+            {
+                "heure": 20,
+                "minute": 0,
+                "duree": 10
+            }
+        ],
+        "brumisation": [
+            {
+                "heure": 17,
+                "minute": 0,
+                "duree": 15
+            }
+        ],
+        "ventilation": [
+            {
+                "heure": 9,
+                "minute": 0,
+                "duree": 25
+            }
+        ],
+        "default_vaporisation": {
+            "duree": 10
         },
-        "brum": {
-            "heures": [
-                13,
-                15
-            ],
+        "default_brumisation": {
             "duree": 15
         },
-        "ventil": {
-            "debut": 9,
-            "fin": 21,
-            "duree": 17
+        "default_ventilation": {
+            "duree": 15
         }
     }
 }
